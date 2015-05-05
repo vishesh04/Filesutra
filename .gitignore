@@ -1,0 +1,14 @@
+/target/
+/out/
+/bin/
+/web-app/plugins
+/web-app/WEB-INF/classes
+/.link_to_grails_plugins/
+
+#IntelliJ files and config
+.idea/
+*.iml
+
+#Eclipse files
+.classpath
+.project
