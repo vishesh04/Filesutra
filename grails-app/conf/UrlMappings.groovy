@@ -1,13 +1,16 @@
 class UrlMappings {
 
-	static mappings = {
-        "/$controller/$action?/$id?(.$format)?"{
+    static mappings = {
+
+        "/api/files/google" (controller: "FilesAPI", action: "googleFiles")
+
+        "/$controller/$action?/$id?(.$format)?" {
             constraints {
                 // apply constraints here
             }
         }
 
-        "/"(view:"/index")
-        "500"(view:'/error')
-	}
+        "/"(controller: 'Picker')
+        "500"(view: '/error')
+    }
 }

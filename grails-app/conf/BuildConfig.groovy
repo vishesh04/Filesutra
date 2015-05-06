@@ -47,10 +47,11 @@ grails.project.dependency.resolution = {
     }
 
     dependencies {
-        // specify dependencies here under either 'build', 'compile', 'runtime', 'test' or 'provided' scopes e.g.
-        // runtime 'mysql:mysql-connector-java:5.1.29'
-        // runtime 'org.postgresql:postgresql:9.3-1101-jdbc41'
+        runtime 'postgresql:postgresql:9.1-901.jdbc4'
+
         test "org.grails:grails-datastore-test-support:1.0.2-grails-2.4"
+
+        compile 'org.codehaus.groovy.modules.http-builder:http-builder:0.7'
     }
 
     plugins {
@@ -74,3 +75,5 @@ grails.project.dependency.resolution = {
         //compile ":handlebars-asset-pipeline:1.3.0.3"
     }
 }
+
+grails.server.port.http = 5000
