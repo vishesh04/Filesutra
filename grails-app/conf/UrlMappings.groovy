@@ -10,7 +10,7 @@ class UrlMappings {
             }
         }
 
-        "/"(controller: 'Picker')
+        "/"(controller: 'Demo')
         "500"(view: '/error')
     }
 }

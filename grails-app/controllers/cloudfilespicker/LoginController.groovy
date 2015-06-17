@@ -25,11 +25,11 @@ class LoginController {
     def googleCallback(String code) {
         def accessInfo = Google.exchangeCode(code)
         def emailId = Google.getEmailId(accessInfo.accessToken)
-        authService.googleLogin(emailId, accessInfo)
-        def resp = [
-                success : true
-        ]
-        render resp as JSON
+        Access googleAccess = authService.googleLogin(emailId, accessInfo)
+        if (googleAccess) {
+            session.googleAccessId = googleAccess.id
+        }
+        redirect(uri: '/picker')
     }
 
     def dropboxCallback() {

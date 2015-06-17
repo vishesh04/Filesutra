@@ -2,6 +2,7 @@ package cloudfilespicker
 
 import grails.converters.JSON
 import grails.transaction.Transactional
+import org.apache.commons.io.IOUtils
 
 @Transactional
 class GoogleService {
@@ -11,18 +12,26 @@ class GoogleService {
         try {
             c(accessInfo.accessToken)
         } catch (e) {
-            if (e.response?.status == 401) {
+            if (e.hasProperty("response") && e.response?.status == 401) {
                 accessInfo.accessToken = Google.refreshToken(access.refreshToken)
                 access.accessInfo = Utils.jsonToString(accessInfo)
                 access.save(flush: true, failOnError: true)
                 c(accessInfo.accessToken)
+            } else {
+                throw e
             }
         }
     }
 
-    def getContent(String folderId, Access access) {
+    def listItems(String folderId, Access access) {
         callAPI({ accessToken->
-            return Google.getContent(folderId, accessToken)
+            return Google.listItems(folderId, accessToken)
+        }, access)
+    }
+
+    URLConnection getDownloadUrlConnection(String fileId, Access access) {
+        callAPI({ accessToken ->
+            return Google.getDownloadUrlConnection(fileId, accessToken)
         }, access)
     }
 }

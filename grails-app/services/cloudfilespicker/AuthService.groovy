@@ -1,17 +1,19 @@
 package cloudfilespicker
 
 import grails.transaction.Transactional
+import org.codehaus.groovy.grails.web.util.WebUtils
 
 @Transactional
 class AuthService {
 
-    def googleLogin(emailId, accessInfo) {
+    Access googleLogin(emailId, accessInfo) {
         // save google info
-        Access access = Access.findByEmailIdAndType(emailId, AccessType.GOOGLE)
+        Access access = Access.findByEmailIdAndType(emailId, StorageType.GOOGLE)
         if (!access) {
-            access = new Access(type: AccessType.GOOGLE, emailId: emailId)
+            access = new Access(type: StorageType.GOOGLE, emailId: emailId)
         }
         access.accessInfo = Utils.jsonToString(accessInfo)
         access.save(flush: true, failOnError: true)
+        return access
     }
 }
