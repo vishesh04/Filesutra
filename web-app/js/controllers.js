@@ -3,9 +3,18 @@ var filesutraControllers = angular.module("filesutraControllers", ["filesutraSer
 filesutraControllers.controller("AppCtrl", ['$scope', '$http', "fileService", function($scope, $http, fileService) {
     $scope.selectApp = function(app) {
       $scope.app = app;
-      $scope.items = fileService.getItems(app, null, function(items) {
-        $scope.items = items;
-      });
+      if ($scope.isConnected($scope.app)) {
+        $scope.items = fileService.getItems(app, null, function(items) {
+          $scope.items = items;
+        });
+      }
+    }
+
+    $scope.logout = function(app) {
+      var connectedAppPos = $scope.appSettings.connectedApps.indexOf(app)
+      if (connectedAppPos != -1) {
+        $scope.appSettings.connectedApps.splice(connectedAppPos, 1)
+      }
     }
 
     $scope.isConnected = function(app) {
@@ -19,6 +28,10 @@ filesutraControllers.controller("AppCtrl", ['$scope', '$http', "fileService", fu
     $scope.init = function(appSettings){
       $scope.appSettings = appSettings;
       $scope.app = "Google";
-      $scope.items = [];
+      if ($scope.isConnected($scope.app)) {
+          $scope.items = fileService.getItems($scope.app, null, function(items) {
+          $scope.items = items;
+        });
+      }
     }
 }]);

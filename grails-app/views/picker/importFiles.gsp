@@ -23,6 +23,10 @@
     li a {
       cursor: pointer;
     }
+    .filesPane {
+      max-height: 400px;
+      overflow: auto;
+    }
   </style>
 </head>
 
@@ -34,28 +38,34 @@
       <ul class="list-group">
         <li class="list-group-item">
           <a ng-click="selectApp('Google')">Google Drive</a>
+          <a ng-if="isConnected('Google')" ng-click="logout('Google')" class="pull-right">logout</a>
         </li>
         <li class="list-group-item">
           <a ng-click="selectApp('Dropbox')">Dropbox</a>
+          <a ng-if="isConnected('Dropbox')" ng-click="logout('Dropbox')" class="pull-right">logout</a>
         </li>
         <li class="list-group-item">
           <a ng-click="selectApp('Box')">Box</a>
+          <a ng-if="isConnected('Box')" ng-click="logout('Box')" class="pull-right">logout</a>
         </li>
         <li class="list-group-item">
           <a ng-click="selectApp('OneDrive')">OneDrive</a>
+          <a ng-if="isConnected('OneDrive')" ng-click="logout('OneDrive')" class="pull-right">logout</a>
         </li>
       </ul>
     </div>
-    <div class="col-md-9">
+    <div class="col-md-9 filesPane">
       <div>
         <div ng-if="app!=undefined">
           <div ng-if="!isConnected(app)">
             <a class="btn btn-primary" href="/login/{{app.toLowerCase()}}">Connect {{app}}</a>
           </div>
           <div ng-if="isConnected(app)">
-            Files and folders from {{app}}
+            <div ng-if="!items || items.length == 0" style="text-align: center;">
+              Loading...
+            </div>
             <div ng-repeat="item in items">
-              {{item.kind}} - {{item.title}}
+              <i ng-class="item.type == 'file' ? 'glyphicon glyphicon-file' : 'glyphicon glyphicon-folder-open'"></i> {{item.name}}
             </div>
           </div>
         </div>
