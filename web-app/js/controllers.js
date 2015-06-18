@@ -13,7 +13,8 @@ filesutraControllers.controller("AppCtrl", ['$scope', '$http', "fileService", fu
     $scope.logout = function(app) {
       var connectedAppPos = $scope.appSettings.connectedApps.indexOf(app)
       if (connectedAppPos != -1) {
-        $scope.appSettings.connectedApps.splice(connectedAppPos, 1)
+        $scope.appSettings.connectedApps.splice(connectedAppPos, 1);
+        $scope.selectApp(app);
       }
     }
 

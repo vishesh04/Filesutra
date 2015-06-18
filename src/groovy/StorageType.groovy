@@ -1,4 +1,4 @@
-package cloudfilespicker
+package filesutra
 
 /**
  * Created by vishesh on 06/05/15.

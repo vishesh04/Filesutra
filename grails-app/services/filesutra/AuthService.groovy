@@ -1,7 +1,6 @@
-package cloudfilespicker
+package filesutra
 
 import grails.transaction.Transactional
-import org.codehaus.groovy.grails.web.util.WebUtils
 
 @Transactional
 class AuthService {

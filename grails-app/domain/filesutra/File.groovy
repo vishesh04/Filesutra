@@ -1,4 +1,4 @@
-package cloudfilespicker
+package filesutra
 
 class File {
 

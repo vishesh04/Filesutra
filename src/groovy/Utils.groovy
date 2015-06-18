@@ -1,4 +1,4 @@
-package cloudfilespicker
+package filesutra
 
 import groovy.json.JsonBuilder
 

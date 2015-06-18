@@ -1,4 +1,4 @@
-package cloudfilespicker
+package filesutra
 
 import grails.test.mixin.TestFor
 import spock.lang.Specification
@@ -6,8 +6,8 @@ import spock.lang.Specification
 /**
  * See the API for {@link grails.test.mixin.web.ControllerUnitTestMixin} for usage instructions
  */
-@TestFor(LoginController)
-class LoginControllerSpec extends Specification {
+@TestFor(DemoController)
+class DemoControllerSpec extends Specification {
 
     def setup() {
     }

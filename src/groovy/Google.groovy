@@ -1,9 +1,7 @@
-package cloudfilespicker
+package filesutra
 
-import grails.converters.JSON
 import grails.util.Holders
 import groovyx.net.http.RESTClient
-import org.apache.commons.io.IOUtils
 
 import static groovyx.net.http.ContentType.URLENC
 

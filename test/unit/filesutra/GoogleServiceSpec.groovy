@@ -1,4 +1,4 @@
-package cloudfilespicker
+package filesutra
 
 import grails.test.mixin.TestFor
 import spock.lang.Specification
@@ -6,8 +6,8 @@ import spock.lang.Specification
 /**
  * See the API for {@link grails.test.mixin.services.ServiceUnitTestMixin} for usage instructions
  */
-@TestFor(AuthService)
-class AuthServiceSpec extends Specification {
+@TestFor(GoogleService)
+class GoogleServiceSpec extends Specification {
 
     def setup() {
     }

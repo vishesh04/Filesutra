@@ -1,4 +1,4 @@
-package cloudfilespicker
+package filesutra
 
 import grails.util.Holders
 import groovyx.net.http.RESTClient

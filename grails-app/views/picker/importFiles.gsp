@@ -34,7 +34,7 @@
 
 <div class="container" style="padding: 10px">
   <div class="row" ng-controller="AppCtrl" ng-init="init(${appSettings})">
-    <div class="col-md-3">
+    <div class="col-md-4 col-sm-4">
       <ul class="list-group">
         <li class="list-group-item">
           <a ng-click="selectApp('Google')">Google Drive</a>
@@ -54,10 +54,10 @@
         </li>
       </ul>
     </div>
-    <div class="col-md-9 filesPane">
+    <div class="col-md-8 col-sm-8 filesPane">
       <div>
         <div ng-if="app!=undefined">
-          <div ng-if="!isConnected(app)">
+          <div ng-if="!isConnected(app)" style="text-align: center; margin-top: 40px">
             <a class="btn btn-primary" href="/login/{{app.toLowerCase()}}">Connect {{app}}</a>
           </div>
           <div ng-if="isConnected(app)">
