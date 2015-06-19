@@ -12,7 +12,7 @@ class OnedriveService {
             c(accessInfo.accessToken)
         } catch (e) {
             if (e.hasProperty("response") && e.response?.status == 401) {
-                accessInfo.accessToken = Onedrive.refreshToken(access.refreshToken)
+                accessInfo.accessToken = Onedrive.refreshToken(accessInfo.refreshToken).accessToken
                 access.accessInfo = Utils.jsonToString(accessInfo)
                 access.save(flush: true, failOnError: true)
                 c(accessInfo.accessToken)

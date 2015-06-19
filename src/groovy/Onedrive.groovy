@@ -60,7 +60,7 @@ class Onedrive {
     }
 
     static def refreshToken(String refreshToken) {
-        def restClient = new RESTClient(API_URL)
+        def restClient = new RESTClient(AUTH_URL)
         def resp = restClient.post(
                 path: '/oauth20_token.srf',
                 body: [client_id   : CLIENT_ID, client_secret: CLIENT_SECRET,

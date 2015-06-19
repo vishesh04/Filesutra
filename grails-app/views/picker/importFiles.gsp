@@ -70,8 +70,11 @@
               <a class="btn btn-primary" href="/auth/{{app.toLowerCase()}}">Connect {{app}}</a>
             </div>
             <div ng-if="isConnected(app)">
-              <div ng-if="!items || items.length == 0" style="text-align: center;">
+              <div ng-if="!items" style="text-align: center;">
                 Loading...
+              </div>
+              <div ng-if="items.length == 0" style="text-align: center;">
+                No Files or Folders
               </div>
               <div ng-repeat="item in items">
                 <div class="filesutraItem" ng-click="selectItem(item)"

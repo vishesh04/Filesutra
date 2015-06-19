@@ -58,7 +58,7 @@ class FilesAPIController {
         items.each {
             def mItem = new ApiResponse.Item()
             mItem.id = it.id
-            mItem.type = it.type
+            mItem.type = it.type == 'file' ? 'file' : 'folder'
             mItem.name = it.name
             itemResponse.push(mItem)
         }

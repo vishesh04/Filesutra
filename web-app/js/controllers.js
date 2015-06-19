@@ -57,7 +57,7 @@ filesutraControllers.controller("AppCtrl", ['$scope', '$http', '$location', "fil
       if (chunks.length > 2) {
         folderId = chunks[chunks.length - 1];
       }
-      $scope.items = [];
+      $scope.items = null;
       if ($scope.isConnected(app)) {
         fileService.getItems(app, folderId, function (items) {
           $scope.items = items;
