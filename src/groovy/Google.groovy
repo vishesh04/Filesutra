@@ -80,7 +80,7 @@ class Google {
         def resp = restClient.post(
                 path: '/oauth2/v3/token',
                 body: [client_id   : CLIENT_ID, client_secret: CLIENT_SECRET,
-                       refresh_token: refreshToken, grant_type: 'authorization_code'],
+                       refresh_token: refreshToken, grant_type: 'refresh_token'],
                 requestContentType: URLENC)
         return resp.data.access_token
     }

@@ -3,7 +3,28 @@ var filesutraServices = angular.module("filesutraServices", []);
 filesutraServices.factory("fileService", ['$http', function($http) {
   return {
     getItems: function(app, folderId, callback) {
-      $http.get('/api/files/'+app.toLowerCase()).success(function(data) {
+      var endpoint = '/api/files/'+app.toLowerCase()
+      if (folderId) {
+        endpoint += '?folderId='+folderId;
+      }
+      $http.get(endpoint).success(function(data) {
+        callback(data);
+      });
+    },
+    import : function(app, item, callback) {
+      var endpoint = '/api/import/'+app.toLowerCase();
+      $http.post(endpoint, {fileId: item.id, fileName: item.name})
+        .success(function(data) {
+          callback(data);
+      });
+    }
+  }
+}]);
+
+filesutraServices.factory("authService", ['$http', function($http) {
+  return {
+    logout: function(app, callback) {
+      $http.get('/auth/logout/?app='+app).success(function(data) {
         callback(data);
       });
     }

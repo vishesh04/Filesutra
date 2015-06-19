@@ -2,7 +2,7 @@ package filesutra
 
 import grails.converters.JSON
 
-class LoginController {
+class AuthController {
 
     def authService
 
@@ -29,7 +29,7 @@ class LoginController {
         if (googleAccess) {
             session.googleAccessId = googleAccess.id
         }
-        redirect(uri: '/picker')
+        redirect(uri: '/picker#Google')
     }
 
     def dropboxCallback(String code) {
@@ -39,7 +39,7 @@ class LoginController {
         if (dropboxAccess) {
             session.dropboxAccessId = dropboxAccess.id
         }
-        redirect(uri: '/picker')
+        redirect(uri: '/picker#Dropbox')
     }
 
     def boxCallback(String code) {
@@ -49,7 +49,7 @@ class LoginController {
         if (boxAccess) {
             session.boxAccessId = boxAccess.id
         }
-        redirect(uri: '/picker')
+        redirect(uri: '/picker#Box')
     }
 
     def onedriveCallback(String code) {
@@ -59,7 +59,7 @@ class LoginController {
         if (onedriveAccess) {
             session.onedriveAccessId = onedriveAccess.id
         }
-        redirect(uri: '/picker')
+        redirect(uri: '/picker#Onedrive')
     }
 
     def logout(String app) {

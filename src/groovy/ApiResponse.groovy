@@ -5,6 +5,7 @@ package filesutra
  */
 class ApiResponse {
     static class Item {
+        def id
         String name
         String type
         List<ApiResponse.Item> content

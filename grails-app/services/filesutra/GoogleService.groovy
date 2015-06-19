@@ -12,7 +12,7 @@ class GoogleService {
             c(accessInfo.accessToken)
         } catch (e) {
             if (e.hasProperty("response") && e.response?.status == 401) {
-                accessInfo.accessToken = Google.refreshToken(access.refreshToken)
+                accessInfo.accessToken = Google.refreshToken(accessInfo.refreshToken)
                 access.accessInfo = Utils.jsonToString(accessInfo)
                 access.save(flush: true, failOnError: true)
                 c(accessInfo.accessToken)

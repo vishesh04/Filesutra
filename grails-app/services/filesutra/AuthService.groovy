@@ -1,5 +1,6 @@
 package filesutra
 
+import grails.converters.JSON
 import grails.transaction.Transactional
 
 @Transactional
@@ -10,6 +11,9 @@ class AuthService {
         Access access = Access.findByEmailIdAndType(emailId, StorageType.GOOGLE)
         if (!access) {
             access = new Access(type: StorageType.GOOGLE, emailId: emailId)
+        } else{
+            // refresh token is returned only on first login
+            accessInfo.refreshToken = JSON.parse(access.accessInfo).refreshToken
         }
         access.accessInfo = Utils.jsonToString(accessInfo)
         access.save(flush: true, failOnError: true)

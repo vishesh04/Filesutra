@@ -7,6 +7,13 @@ class UrlMappings {
         "/api/files/box"        (controller: "FilesAPI", action: "boxFiles")
         "/api/files/onedrive"   (controller: "FilesAPI", action: "onedriveFiles")
 
+        "/api/import/google"        (controller: "FilesAPI", action: "importGoogleFile")
+        "/api/import/box"           (controller: "FilesAPI", action: "importBoxFile")
+        "/api/import/dropbox"       (controller: "FilesAPI", action: "importDropboxFile")
+        "/api/import/onedrive"      (controller: "FilesAPI", action: "importOnedriveFile")
+
+        "/download/$id"         (controller: "File", action: "downloadFile")
+
         "/$controller/$action?/$id?(.$format)?" {
             constraints {
                 // apply constraints here

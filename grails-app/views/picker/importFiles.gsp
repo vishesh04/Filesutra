@@ -9,6 +9,7 @@
 <html ng-app="filesutraApp">
 <head>
   <title>File Sutra</title>
+  <link rel="shortcut icon" href="/images/favicon.ico" />
 
   <link rel="stylesheet" href="/css/bootstrap.min.css">
 
@@ -24,8 +25,15 @@
       cursor: pointer;
     }
     .filesPane {
+      min-height: 400px;
       max-height: 400px;
       overflow: auto;
+    }
+    .selectedItem {
+      background-color: #46b8da;
+    }
+    .filesutraItem {
+      cursor: pointer;
     }
   </style>
 </head>
@@ -54,21 +62,30 @@
         </li>
       </ul>
     </div>
-    <div class="col-md-8 col-sm-8 filesPane">
-      <div>
-        <div ng-if="app!=undefined">
-          <div ng-if="!isConnected(app)" style="text-align: center; margin-top: 40px">
-            <a class="btn btn-primary" href="/login/{{app.toLowerCase()}}">Connect {{app}}</a>
-          </div>
-          <div ng-if="isConnected(app)">
-            <div ng-if="!items || items.length == 0" style="text-align: center;">
-              Loading...
+    <div class="col-md-8 col-sm-8">
+      <div class="row filesPane">
+        <div>
+          <div ng-if="app!=undefined">
+            <div ng-if="!isConnected(app)" style="text-align: center; margin-top: 40px">
+              <a class="btn btn-primary" href="/auth/{{app.toLowerCase()}}">Connect {{app}}</a>
             </div>
-            <div ng-repeat="item in items">
-              <i ng-class="item.type == 'file' ? 'glyphicon glyphicon-file' : 'glyphicon glyphicon-folder-open'"></i> {{item.name}}
+            <div ng-if="isConnected(app)">
+              <div ng-if="!items || items.length == 0" style="text-align: center;">
+                Loading...
+              </div>
+              <div ng-repeat="item in items">
+                <div class="filesutraItem" ng-click="selectItem(item)"
+                     ng-class="item.id == selectedItem.id && item.type != 'folder' ? 'selectedItem' : ''">
+                  <i ng-class="item.type == 'file' ? 'glyphicon glyphicon-file' : 'glyphicon glyphicon-folder-open'"></i> {{item.name}}
+                </div>
+              </div>
             </div>
           </div>
         </div>
+      </div>
+      <div class="row">
+        <a class="btn btn-primary pull-right" ng-if="app && isConnected(app)"
+           ng-disabled="!selectedItem || selectedItem.type == 'folder'" ng-click="import()">Import</a>
       </div>
     </div>
   </div>
