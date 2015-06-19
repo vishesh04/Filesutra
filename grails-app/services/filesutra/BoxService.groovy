@@ -27,4 +27,10 @@ class BoxService {
             return Box.listItems(folderId, accessToken)
         }, access)
     }
+
+    URLConnection getDownloadUrlConnection(String fileId, Access access) {
+        callAPI({ accessToken ->
+            return Box.getDownloadUrlConnection(fileId, accessToken)
+        }, access)
+    }
 }

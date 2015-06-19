@@ -27,4 +27,10 @@ class OnedriveService {
             return Onedrive.listItems(folderId, accessToken)
         }, access)
     }
+
+    URLConnection getDownloadUrlConnection(String fileId, Access access) {
+        callAPI({ accessToken ->
+            return Onedrive.getDownloadUrlConnection(fileId, accessToken)
+        }, access)
+    }
 }

@@ -17,4 +17,10 @@ class DropboxService {
             return Dropbox.listItems(folderId, accessToken)
         }, access)
     }
+
+    URLConnection getDownloadUrlConnection(String fileId, Access access) {
+        callAPI({ accessToken ->
+            return Dropbox.getDownloadUrlConnection(fileId, accessToken)
+        }, access)
+    }
 }

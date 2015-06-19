@@ -18,6 +18,7 @@ class Dropbox {
 
     private static final String AUTH_URL = "https://www.dropbox.com/1"
     private static final String API_URL = "https://api.dropbox.com"
+    private static final String DOWNLOAD_URL = "https://api-content.dropbox.com/1/files/auto"
 
     static def getLoginUrl() {
         def params = [
@@ -56,20 +57,11 @@ class Dropbox {
         return resp.data.contents
     }
 
-    static def getFile(String fileId, String accessToken) {
-        def restClient = new RESTClient(API_URL)
-        restClient.headers.Authorization = "Bearer $accessToken"
-        def resp = restClient.get(path: "/drive/v2/files/$fileId")
-        return resp.data
-    }
-
     static URLConnection getDownloadUrlConnection(String fileId, String accessToken) {
-        def file = getFile(fileId, accessToken)
-        String contentUrl = file.downloadUrl ? file.downloadUrl : file.exportLinks?."application/pdf"
-//        String contentUrl = "$API_URL/drive/v2/files/$fileId?alt=media"
-        URL url = new URL(contentUrl)
+        URL url = new URL(DOWNLOAD_URL+fileId)
         URLConnection connection = url.openConnection();
         connection.setRequestProperty("Authorization", 'Bearer ' + accessToken);
+        connection.connect()
         return connection
     }
 

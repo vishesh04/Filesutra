@@ -58,21 +58,57 @@ class FilesAPIController {
         items.each {
             def mItem = new ApiResponse.Item()
             mItem.id = it.id
-            mItem.type = it.type == 'file' ? 'file' : 'folder'
+            mItem.type = it.type in ['folder', 'album'] ? 'folder' : 'file'
             mItem.name = it.name
             itemResponse.push(mItem)
         }
         render itemResponse as JSON
     }
 
-    def importGoogleFile(String fileId, String fileName) {
+    def importGoogleFile() {
         def input = request.JSON
         Access access = Access.get(session.googleAccessId)
         File file = new File(fileId: input.fileId, type: StorageType.GOOGLE, access: access, name: input.fileName)
+        file.localFileId = Utils.randomString(15)
         file.save(flush: true, failOnError: true)
         def fileResponse = [
-                downloadUrl: request.serverName + (request.serverPort ? ":$request.serverPort" : "") + "/download/$file.id"
-                //TODO: map file.id to non guessable random string
+                downloadUrl: request.serverName + (request.serverPort ? ":$request.serverPort" : "") + "/download/$file.localFileId"
+        ]
+        render fileResponse as JSON
+    }
+
+    def importBoxFile() {
+        def input = request.JSON
+        Access access = Access.get(session.boxAccessId)
+        File file = new File(fileId: input.fileId, type: StorageType.BOX, access: access, name: input.fileName)
+        file.localFileId = Utils.randomString(15)
+        file.save(flush: true, failOnError: true)
+        def fileResponse = [
+                downloadUrl: request.serverName + (request.serverPort ? ":$request.serverPort" : "") + "/download/$file.localFileId"
+        ]
+        render fileResponse as JSON
+    }
+
+    def importDropboxFile() {
+        def input = request.JSON
+        Access access = Access.get(session.dropboxAccessId)
+        File file = new File(fileId: input.fileId, type: StorageType.DROPBOX, access: access, name: input.fileName)
+        file.localFileId = Utils.randomString(15)
+        file.save(flush: true, failOnError: true)
+        def fileResponse = [
+                downloadUrl: request.serverName + (request.serverPort ? ":$request.serverPort" : "") + "/download/$file.localFileId"
+        ]
+        render fileResponse as JSON
+    }
+
+    def importOnedriveFile() {
+        def input = request.JSON
+        Access access = Access.get(session.onedriveAccessId)
+        File file = new File(fileId: input.fileId, type: StorageType.ONEDRIVE, access: access, name: input.fileName)
+        file.localFileId = Utils.randomString(15)
+        file.save(flush: true, failOnError: true)
+        def fileResponse = [
+                downloadUrl: request.serverName + (request.serverPort ? ":$request.serverPort" : "") + "/download/$file.localFileId"
         ]
         render fileResponse as JSON
     }

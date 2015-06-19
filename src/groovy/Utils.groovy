@@ -12,4 +12,8 @@ class Utils {
         builder(json)
         return builder.toString()
     }
+
+    static def randomString(int length) {
+        return org.apache.commons.lang.RandomStringUtils.random(length, true, true)
+    }
 }

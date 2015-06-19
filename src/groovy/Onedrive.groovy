@@ -71,4 +71,12 @@ class Onedrive {
                 refreshToken: resp.data.refresh_token
         ]
     }
+
+    static URLConnection getDownloadUrlConnection(String fileId, String accessToken) {
+        URL url = new URL(API_URL+"/v5.0/$fileId/content")
+        URLConnection connection = url.openConnection();
+        connection.setRequestProperty("Authorization", 'Bearer ' + accessToken);
+        connection.connect()
+        return connection
+    }
 }

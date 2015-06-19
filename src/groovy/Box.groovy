@@ -69,4 +69,12 @@ class Box {
                 refreshToken: resp.data.refresh_token
         ]
     }
+
+    static URLConnection getDownloadUrlConnection(String fileId, String accessToken) {
+        URL url = new URL(API_URL+"/2.0/files/$fileId/content")
+        URLConnection connection = url.openConnection();
+        connection.setRequestProperty("Authorization", 'Bearer ' + accessToken);
+        connection.connect()
+        return connection
+    }
 }
