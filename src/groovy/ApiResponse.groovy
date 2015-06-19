@@ -8,6 +8,7 @@ class ApiResponse {
         def id
         String name
         String type
+        Long size
         List<ApiResponse.Item> content
     }
 }

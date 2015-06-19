@@ -13,7 +13,7 @@ filesutraServices.factory("fileService", ['$http', function($http) {
     },
     import : function(app, item, callback) {
       var endpoint = '/api/import/'+app.toLowerCase();
-      $http.post(endpoint, {fileId: item.id, fileName: item.name})
+      $http.post(endpoint, {fileId: item.id, fileName: item.name, size: item.size})
         .success(function(data) {
           callback(data);
       });

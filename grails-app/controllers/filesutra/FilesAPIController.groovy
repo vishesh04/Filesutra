@@ -18,6 +18,7 @@ class FilesAPIController {
             mItem.id = it.id
             mItem.type = it.mimeType == "application/vnd.google-apps.folder" ? "folder" : "file"
             mItem.name = it.title
+            mItem.size = it.fileSize ? it.fileSize as long : null
             itemResponse.push(mItem)
         }
         render itemResponse as JSON
@@ -32,6 +33,7 @@ class FilesAPIController {
             mItem.id = URLEncoder.encode(it.path, "UTF-8")
             mItem.type = it.is_dir == true ? "folder" : "file"
             mItem.name = it.path.substring(it.path.lastIndexOf("/")+1)
+            mItem.size = it.bytes ? it.bytes as long : null
             itemResponse.push(mItem)
         }
         render itemResponse as JSON
@@ -46,6 +48,7 @@ class FilesAPIController {
             mItem.id = it.id
             mItem.type = it.type
             mItem.name = it.name
+            mItem.size = it.size ? it.size as long : null
             itemResponse.push(mItem)
         }
         render itemResponse as JSON
@@ -60,6 +63,7 @@ class FilesAPIController {
             mItem.id = it.id
             mItem.type = it.type in ['folder', 'album'] ? 'folder' : 'file'
             mItem.name = it.name
+            mItem.size = it.size  ? it.size as long : null
             itemResponse.push(mItem)
         }
         render itemResponse as JSON
@@ -68,7 +72,8 @@ class FilesAPIController {
     def importGoogleFile() {
         def input = request.JSON
         Access access = Access.get(session.googleAccessId)
-        File file = new File(fileId: input.fileId, type: StorageType.GOOGLE, access: access, name: input.fileName)
+        File file = new File(fileId: input.fileId, type: StorageType.GOOGLE, access: access,
+                name: input.fileName, size: input.size)
         file.localFileId = Utils.randomString(15)
         file.save(flush: true, failOnError: true)
         def fileResponse = [
@@ -80,7 +85,8 @@ class FilesAPIController {
     def importBoxFile() {
         def input = request.JSON
         Access access = Access.get(session.boxAccessId)
-        File file = new File(fileId: input.fileId, type: StorageType.BOX, access: access, name: input.fileName)
+        File file = new File(fileId: input.fileId, type: StorageType.BOX, access: access,
+                name: input.fileName, size: input.size)
         file.localFileId = Utils.randomString(15)
         file.save(flush: true, failOnError: true)
         def fileResponse = [
@@ -92,7 +98,8 @@ class FilesAPIController {
     def importDropboxFile() {
         def input = request.JSON
         Access access = Access.get(session.dropboxAccessId)
-        File file = new File(fileId: input.fileId, type: StorageType.DROPBOX, access: access, name: input.fileName)
+        File file = new File(fileId: input.fileId, type: StorageType.DROPBOX, access: access,
+                name: input.fileName, size: input.size)
         file.localFileId = Utils.randomString(15)
         file.save(flush: true, failOnError: true)
         def fileResponse = [
@@ -104,7 +111,8 @@ class FilesAPIController {
     def importOnedriveFile() {
         def input = request.JSON
         Access access = Access.get(session.onedriveAccessId)
-        File file = new File(fileId: input.fileId, type: StorageType.ONEDRIVE, access: access, name: input.fileName)
+        File file = new File(fileId: input.fileId, type: StorageType.ONEDRIVE, access: access,
+                name: input.fileName, size: input.size)
         file.localFileId = Utils.randomString(15)
         file.save(flush: true, failOnError: true)
         def fileResponse = [

@@ -5,4 +5,6 @@ databaseChangeLog = {
 	include file: 'create-table-file.groovy'
 
 	include file: 'add-local-file-id-to-file.groovy'
+
+	include file: 'add-size-to-file.groovy'
 }

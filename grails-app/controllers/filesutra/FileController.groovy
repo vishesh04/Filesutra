@@ -43,6 +43,9 @@ class FileController {
     private def proxyUrlConnection(URLConnection connection, File file, response) {
         response.setHeader "Content-Type", connection.getHeaderField("Content-Type")
         response.setHeader "Content-disposition", "attachment; filename=$file.name"
+        if (file.size) {
+            response.setHeader "Content-Length", "$file.size"
+        }
         response.outputStream << connection.inputStream
         response.outputStream.flush()
     }
