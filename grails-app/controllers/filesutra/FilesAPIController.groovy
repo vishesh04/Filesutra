@@ -77,7 +77,9 @@ class FilesAPIController {
         file.localFileId = Utils.randomString(15)
         file.save(flush: true, failOnError: true)
         def fileResponse = [
-                downloadUrl: request.serverName + (request.serverPort ? ":$request.serverPort" : "") + "/download/$file.localFileId"
+                fileName: file.name,
+                downloadUrl: request.serverName + (request.serverPort ? ":$request.serverPort" : "") + "/download/$file.localFileId",
+                size: file.size
         ]
         render fileResponse as JSON
     }
@@ -90,7 +92,9 @@ class FilesAPIController {
         file.localFileId = Utils.randomString(15)
         file.save(flush: true, failOnError: true)
         def fileResponse = [
-                downloadUrl: request.serverName + (request.serverPort ? ":$request.serverPort" : "") + "/download/$file.localFileId"
+                fileName: file.name,
+                downloadUrl: request.serverName + (request.serverPort ? ":$request.serverPort" : "") + "/download/$file.localFileId",
+                size: file.size
         ]
         render fileResponse as JSON
     }
@@ -103,7 +107,9 @@ class FilesAPIController {
         file.localFileId = Utils.randomString(15)
         file.save(flush: true, failOnError: true)
         def fileResponse = [
-                downloadUrl: request.serverName + (request.serverPort ? ":$request.serverPort" : "") + "/download/$file.localFileId"
+                fileName: file.name,
+                downloadUrl: request.serverName + (request.serverPort ? ":$request.serverPort" : "") + "/download/$file.localFileId",
+                size: file.size
         ]
         render fileResponse as JSON
     }
@@ -116,7 +122,9 @@ class FilesAPIController {
         file.localFileId = Utils.randomString(15)
         file.save(flush: true, failOnError: true)
         def fileResponse = [
-                downloadUrl: request.serverName + (request.serverPort ? ":$request.serverPort" : "") + "/download/$file.localFileId"
+                fileName: file.name,
+                downloadUrl: request.serverName + (request.serverPort ? ":$request.serverPort" : "") + "/download/$file.localFileId",
+                size: file.size
         ]
         render fileResponse as JSON
     }

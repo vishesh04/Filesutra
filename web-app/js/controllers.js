@@ -35,8 +35,12 @@ filesutraControllers.controller("AppCtrl", ['$scope', '$http', '$location', "fil
 
     $scope.import = function() {
       fileService.import($scope.app, $scope.selectedItem, function(data) {
-        console.log(data);
-      })
+        window.opener.postMessage({
+          type  : 'filesutra',
+          data   :  data
+        }, '*');
+        window.close();
+      });
     }
 
     $scope.init = function(appSettings){

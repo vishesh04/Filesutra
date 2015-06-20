@@ -19,7 +19,9 @@
 </div>
 <script>
   $("#importBtn").click(function() {
-    window.open("/picker", "Filesutra", "width=800, height=600, top=100, left=300")
+    filesutra.importFiles(function(data) {
+      console.log(data);
+    });
   });
 </script>
 </body>
