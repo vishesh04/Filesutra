@@ -28,7 +28,7 @@ class GoogleService {
         }, access)
     }
 
-    URLConnection getDownloadUrlConnection(String fileId, Access access) {
+    def getDownloadUrlConnection(String fileId, Access access) {
         callAPI({ accessToken ->
             return Google.getDownloadUrlConnection(fileId, accessToken)
         }, access)

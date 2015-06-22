@@ -65,14 +65,17 @@ class Google {
         return resp.data
     }
 
-    static URLConnection getDownloadUrlConnection(String fileId, String accessToken) {
+    static def getDownloadUrlConnection(String fileId, String accessToken) {
         def file = getFile(fileId, accessToken)
         String contentUrl = file.downloadUrl ? file.downloadUrl : file.exportLinks?."application/pdf"
-//        String contentUrl = "$API_URL/drive/v2/files/$fileId?alt=media"
         URL url = new URL(contentUrl)
         URLConnection connection = url.openConnection();
         connection.setRequestProperty("Authorization", 'Bearer ' + accessToken);
-        return connection
+        def resp = [connection: connection]
+        if (!file.downloadUrl && contentUrl) {
+            resp.extension = "pdf"
+        }
+        return resp
     }
 
     static def refreshToken(String refreshToken) {

@@ -17,20 +17,25 @@ class FileController {
             def connection
             switch ((StorageType) file.type) {
                 case StorageType.GOOGLE:
-                    connection = googleService.getDownloadUrlConnection(file.fileId, file.access)
-                    proxyUrlConnection(connection, file, response)
+                    def googleFile = googleService.getDownloadUrlConnection(file.fileId, file.access)
+                    def fileName = file.name
+                    if (googleFile.extension) {
+                        fileName += ".$googleFile.extension"
+                    }
+                    connection = googleFile.connection
+                    proxyUrlConnection(connection, file, fileName, response)
                     break
                 case StorageType.BOX:
                     connection = boxService.getDownloadUrlConnection(file.fileId, file.access)
-                    proxyUrlConnection(connection, file, response)
+                    proxyUrlConnection(connection, file, file.name, response)
                     break
                 case StorageType.DROPBOX:
                     connection = dropboxService.getDownloadUrlConnection(file.fileId, file.access)
-                    proxyUrlConnection(connection, file, response)
+                    proxyUrlConnection(connection, file, file.name, response)
                     break
                 case StorageType.ONEDRIVE:
                     connection = onedriveService.getDownloadUrlConnection(file.fileId, file.access)
-                    proxyUrlConnection(connection, file, response)
+                    proxyUrlConnection(connection, file, file.name, response)
                 default:
                     break
             }
@@ -40,9 +45,9 @@ class FileController {
         }
     }
 
-    private def proxyUrlConnection(URLConnection connection, File file, response) {
+    private def proxyUrlConnection(URLConnection connection, File file, String fileName, response) {
         response.setHeader "Content-Type", connection.getHeaderField("Content-Type")
-        response.setHeader "Content-disposition", "attachment; filename=$file.name"
+        response.setHeader "Content-disposition", "attachment; filename=$fileName"
         if (file.size) {
             response.setHeader "Content-Length", "$file.size"
         }

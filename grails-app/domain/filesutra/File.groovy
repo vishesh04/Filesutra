@@ -11,5 +11,6 @@ class File {
     Access access
 
     static constraints = {
+        size    nullable: true
     }
 }
