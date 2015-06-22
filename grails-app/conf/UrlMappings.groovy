@@ -20,7 +20,7 @@ class UrlMappings {
             }
         }
 
-        "/"(controller: 'Demo')
+        "/"(controller: 'Picker', action: "importFiles")
         "500"(view: '/error')
     }
 }

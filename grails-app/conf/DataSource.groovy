@@ -3,10 +3,9 @@ dataSource {
     driverClassName = "org.postgresql.Driver"
     dialect = org.hibernate.dialect.PostgreSQL9Dialect
     url = "jdbc:postgresql://localhost:5432/cfilesdb"
-    /* Moved to external config file
-    username = '*********'
-    password = '*********'
-    */
+    // Moved to external config file
+    username = ''
+    password = ''
 
     dbCreate = "" // one of 'create', 'create-drop', 'update', 'validate', ''
 }

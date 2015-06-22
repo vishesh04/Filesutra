@@ -67,7 +67,7 @@ class AuthController {
                 session.onedriveAccessId = onedriveAccess.id
             }
         }
-        redirect(uri: '/picker#Onedrive')
+        redirect(uri: '/picker#OneDrive')
     }
 
     def logout(String app) {

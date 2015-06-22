@@ -1,4 +1,4 @@
-var filesutraServer = "http://localhost:5000/picker";
+var filesutraServer = "http://filesutra.com";
 
 window.filesutra = {
   importFiles: function(callback) {
