@@ -78,7 +78,9 @@ class FilesAPIController {
         file.save(flush: true, failOnError: true)
         def fileResponse = [
                 fileName: file.name,
-                downloadUrl: request.serverName + (request.serverPort && request.serverPort != 80 ? ":$request.serverPort" : "") + "/download/$file.localFileId",
+                downloadUrl: request.isSecure() ? "https://" : "http://" +
+                        request.serverName + (request.serverPort && request.serverPort != 80 ? ":$request.serverPort" : "") +
+                        "/download/$file.localFileId",
                 size: file.size
         ]
         render fileResponse as JSON
@@ -93,7 +95,9 @@ class FilesAPIController {
         file.save(flush: true, failOnError: true)
         def fileResponse = [
                 fileName: file.name,
-                downloadUrl: request.serverName + (request.serverPort && request.serverPort != 80 ? ":$request.serverPort" : "") + "/download/$file.localFileId",
+                downloadUrl: request.isSecure() ? "https://" : "http://" +
+                        request.serverName + (request.serverPort && request.serverPort != 80 ? ":$request.serverPort" : "") +
+                        "/download/$file.localFileId",
                 size: file.size
         ]
         render fileResponse as JSON
@@ -108,7 +112,9 @@ class FilesAPIController {
         file.save(flush: true, failOnError: true)
         def fileResponse = [
                 fileName: file.name,
-                downloadUrl: request.serverName + (request.serverPort && request.serverPort != 80 ? ":$request.serverPort" : "") + "/download/$file.localFileId",
+                downloadUrl: request.isSecure() ? "https://" : "http://" +
+                        request.serverName + (request.serverPort && request.serverPort != 80 ? ":$request.serverPort" : "") +
+                        "/download/$file.localFileId",
                 size: file.size
         ]
         render fileResponse as JSON
@@ -123,7 +129,9 @@ class FilesAPIController {
         file.save(flush: true, failOnError: true)
         def fileResponse = [
                 fileName: file.name,
-                downloadUrl: request.serverName + (request.serverPort && request.serverPort != 80 ? ":$request.serverPort" : "") + "/download/$file.localFileId",
+                downloadUrl: request.isSecure() ? "https://" : "http://" +
+                        request.serverName + (request.serverPort && request.serverPort != 80 ? ":$request.serverPort" : "") +
+                        "/download/$file.localFileId",
                 size: file.size
         ]
         render fileResponse as JSON
