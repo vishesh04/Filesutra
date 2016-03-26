@@ -8,6 +8,7 @@ class FilesAPIController {
     def dropboxService
     def boxService
     def onedriveService
+    def amazonService
 
     def googleFiles(String folderId) {
         folderId = folderId ? folderId : "root"
@@ -69,6 +70,24 @@ class FilesAPIController {
         render itemResponse as JSON
     }
 
+    def amazonFiles(String folderId) {
+        Access access = Access.get(session.amazonAccessId)
+        folderId = folderId ? folderId : access.emailId
+        def items =  amazonService.listItems(folderId, access, session[AmazonCloudDriveAPIType.METADATA.toString()])
+        def itemResponse = []
+        items.each {
+            if (it.kind != "ASSET") {
+                def mItem = new ApiResponse.Item()
+                mItem.id = it.id
+                mItem.type = it.kind == 'FOLDER' ? 'folder' : 'file'
+                mItem.name = it.name
+                mItem.size = it.contentProperties?.size  ? it.contentProperties?.size as long : null
+                itemResponse.push(mItem)
+            }
+        }
+        render itemResponse as JSON
+    }
+
     def importGoogleFile() {
         def input = request.JSON
         Access access = Access.get(session.googleAccessId)
@@ -124,6 +143,23 @@ class FilesAPIController {
         def input = request.JSON
         Access access = Access.get(session.onedriveAccessId)
         File file = new File(fileId: input.fileId, type: StorageType.ONEDRIVE, access: access,
+                name: input.fileName, size: input.size)
+        file.localFileId = Utils.randomString(15)
+        file.save(flush: true, failOnError: true)
+        def fileResponse = [
+                fileName: file.name,
+                downloadUrl: request.isSecure() ? "https://" : "http://" +
+                        request.serverName + (request.serverPort && request.serverPort != 80 ? ":$request.serverPort" : "") +
+                        "/download/$file.localFileId",
+                size: file.size
+        ]
+        render fileResponse as JSON
+    }
+
+    def importAmazonFile() {
+        def input = request.JSON
+        Access access = Access.get(session.amazonAccessId)
+        File file = new File(fileId: input.fileId, type: StorageType.AMAZON_CLOUD_DRIVE, access: access,
                 name: input.fileName, size: input.size)
         file.localFileId = Utils.randomString(15)
         file.save(flush: true, failOnError: true)

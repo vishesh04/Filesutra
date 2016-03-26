@@ -6,6 +6,7 @@ class FileController {
     def boxService
     def dropboxService
     def onedriveService
+    def amazonService
 
     def downloadFile(String id) {
         def files = File.findAllByLocalFileId(id)
@@ -35,6 +36,9 @@ class FileController {
                     break
                 case StorageType.ONEDRIVE:
                     connection = onedriveService.getDownloadUrlConnection(file.fileId, file.access)
+                    proxyUrlConnection(connection, file, file.name, response)
+                case StorageType.AMAZON_CLOUD_DRIVE:
+                    connection = amazonService.getDownloadUrlConnection(file.fileId, file.access, session[AmazonCloudDriveAPIType.NODE.toString()])
                     proxyUrlConnection(connection, file, file.name, response)
                 default:
                     break

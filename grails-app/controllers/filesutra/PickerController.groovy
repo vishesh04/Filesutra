@@ -18,6 +18,9 @@ class PickerController {
         if (session.onedriveAccessId) {
             connectedApps.push("OneDrive")
         }
+        if (session.amazonAccessId) {
+            connectedApps.push("AmazonCloudDrive")
+        }
         def appSettings = [
                 connectedApps : connectedApps
         ]

@@ -60,6 +60,10 @@
           <a ng-click="selectApp('OneDrive')">OneDrive</a>
           <a ng-if="isConnected('OneDrive')" ng-click="logout('OneDrive')" class="pull-right">logout</a>
         </li>
+        <li class="list-group-item">
+          <a ng-click="selectApp('AmazonCloudDrive')">Amazon Cloud Drive</a>
+          <a ng-if="isConnected('AmazonCloudDrive')" ng-click="logout('AmazonCloudDrive')" class="pull-right">logout</a>
+        </li>
       </ul>
     </div>
     <div class="col-md-8 col-sm-8">
@@ -67,7 +71,8 @@
         <div>
           <div ng-if="app!=undefined">
             <div ng-if="!isConnected(app)" style="text-align: center; margin-top: 40px">
-              <a class="btn btn-primary" href="/auth/{{app.toLowerCase()}}">Connect {{app}}</a>
+              <a class="btn btn-primary" href="/auth/{{app=='AmazonCloudDrive'? 'amazon' : app.toLowerCase()}}">
+                Connect {{app=='AmazonCloudDrive'? 'Amazon Cloud Drive' : app}}</a>
             </div>
             <div ng-if="isConnected(app)">
               <div ng-if="!items" style="text-align: center;">

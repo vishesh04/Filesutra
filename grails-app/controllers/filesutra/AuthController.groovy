@@ -5,6 +5,7 @@ import grails.converters.JSON
 class AuthController {
 
     def authService
+    def amazonService
 
     def google() {
         redirect(url: Google.getLoginUrl())
@@ -20,6 +21,10 @@ class AuthController {
 
     def onedrive() {
         redirect(url: Onedrive.getLoginUrl())
+    }
+
+    def amazon() {
+        redirect(url: AmazonCloudDrive.getLoginUrl())
     }
 
     def googleCallback(String code) {
@@ -70,6 +75,21 @@ class AuthController {
         redirect(uri: '/picker#OneDrive')
     }
 
+    def amazonCallback(String code) {
+        if (code) {
+            def accessInfo = AmazonCloudDrive.exchangeCode(code)
+            def endpoints = AmazonCloudDrive.getUserEndpoints(accessInfo.accessToken)
+            session[AmazonCloudDriveAPIType.NODE.toString()] = endpoints.contentUrl
+            session[AmazonCloudDriveAPIType.METADATA.toString()] = endpoints.metadataUrl
+            def rootFolderId = AmazonCloudDrive.getRootFolderId(session[AmazonCloudDriveAPIType.METADATA.toString()], accessInfo.accessToken)
+            Access amazonAccess = authService.amazonLogin(rootFolderId, accessInfo)
+            if (amazonAccess) {
+                session.amazonAccessId = amazonAccess.id
+            }
+        }
+        redirect(uri: '/picker#AmazonCloudDrive')
+    }
+
     def logout(String app) {
         switch (app) {
             case "Google":
@@ -83,6 +103,11 @@ class AuthController {
                 break
             case "OneDrive":
                 session.onedriveAccessId = null
+                break
+            case "AmazonCloudDrive":
+                session.amazonAccessId = null
+                session[AmazonCloudDriveAPIType.NODE.toString()] = null
+                session[AmazonCloudDriveAPIType.METADATA.toString()] = null
                 break
         }
         def resp = [success: true]

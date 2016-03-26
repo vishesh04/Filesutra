@@ -52,4 +52,15 @@ class AuthService {
         access.save(flush: true, failOnError: true)
         return access
     }
+
+    Access amazonLogin(rootFolderId, accessInfo) {
+        // save amazon login info
+        Access access = Access.findByEmailIdAndType(rootFolderId, StorageType.ONEDRIVE)
+        if (!access) {
+            access = new Access(type: StorageType.AMAZON_CLOUD_DRIVE, emailId: rootFolderId)
+        }
+        access.accessInfo = Utils.jsonToString(accessInfo)
+        access.save(flush: true, failOnError: true)
+        return access
+    }
 }
