@@ -6,6 +6,21 @@ filesutraControllers.controller("AppCtrl", ['$scope', '$http', '$location', "fil
       $location.path(app);
     }
 
+    $scope.login = function(app) {
+      var redirectUrl = '/auth/' + (app == 'AmazonCloudDrive'? 'amazon' : app.toLowerCase());
+      if (window.opener) {
+        window.location = redirectUrl;
+      } else {
+        var oAuthWndow = window.open(redirectUrl, "Filesutra", "width=800, height=600, top=100, left=300");
+        var interval = window.setInterval(function() {
+          if (oAuthWndow.location.href.indexOf('picker') != -1) {
+            oAuthWndow.close();
+            location.reload();
+          }
+        }, 1000);
+      }
+    }
+
     $scope.logout = function(app) {
       var connectedAppPos = $scope.appSettings.connectedApps.indexOf(app)
       if (connectedAppPos != -1) {

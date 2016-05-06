@@ -1,4 +1,4 @@
-var filesutraServer = "http://filesutra.com";
+var filesutraServer = "https://filesutra.com";
 
 window.filesutra = {
   importFiles: function(callback, options) {
