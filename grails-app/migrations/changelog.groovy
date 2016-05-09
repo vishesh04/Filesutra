@@ -9,4 +9,6 @@ databaseChangeLog = {
 	include file: 'add-size-to-file.groovy'
 
 	include file: 'make-size-nullable-in-file.groovy'
+
+	include file: 'add-created-and-updated-dates-to-tables.groovy'
 }

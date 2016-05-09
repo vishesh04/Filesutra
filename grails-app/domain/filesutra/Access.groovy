@@ -6,7 +6,12 @@ class Access {
     String type
     String accessInfo
 
+    Date dateCreated
+    Date lastUpdated
+
     static constraints = {
+        dateCreated nullable: true
+        lastUpdated nullable: true
     }
 
     static mapping = {

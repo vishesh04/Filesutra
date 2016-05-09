@@ -10,7 +10,12 @@ class File {
 
     Access access
 
+    Date dateCreated
+    Date lastUpdated
+
     static constraints = {
-        size    nullable: true
+        dateCreated nullable: true
+        lastUpdated nullable: true
+        size        nullable: true
     }
 }
