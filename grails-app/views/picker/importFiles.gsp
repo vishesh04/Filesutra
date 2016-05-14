@@ -57,6 +57,9 @@
     .imgContainer{
     float:left;
 }
+    .import-btn {
+      margin-right: 20px;
+    }
   </style>
 </head>
 
@@ -65,7 +68,7 @@
 <div class="container" style="padding: 10px">
   <div class="row" ng-controller="AppCtrl" ng-init="init(${appSettings})">
     <div class="col-md-3 col-sm-3">
-      <ul class="list-group">
+    <ul class="list-group">
         <li class="list-group-item">
           <a ng-click="selectApp('Google')">Google Drive</a>
           <a ng-if="isConnected('Google')" ng-click="logout('Google')" class="pull-right">logout</a>
@@ -93,11 +96,11 @@
       </ul>
     </div>
     <div class="col-md-6 col-sm-6">
-      <div class="row filesPane">
+    <div class="row filesPane">
         <div>
           <div ng-if="app!=undefined">
             <div ng-if="!isConnected(app)" style="text-align: center; margin-top: 40px">
-              <a class="btn btn-primary" href="/auth/{{app=='AmazonCloudDrive'? 'amazon' : app.toLowerCase()}}">
+              <a class="btn btn-primary" ng-click="login(app)">
                 Connect {{app=='AmazonCloudDrive'? 'Amazon Cloud Drive' : app}}</a>
             </div>
             <div ng-if="isConnected(app)">
@@ -143,14 +146,9 @@
         
       </div>
       <div class="row">
-          <a class="btn btn-primary pull-right" ng-if="app && isConnected(app)" ng-disabled="!selectedItem || selectedItem.type == 'folder'" ng-click="import()">Import</a>
-      </div>
-    </div>
-    <div id="preview" class="span3">
-      <h3 id="helpMessage">Select one file</h3>
-      <p id="subMessage">Click to select multiple items.</p>
-        
-      
+
+        <a class="btn btn-primary pull-right import-btn" ng-if="app && isConnected(app)"
+           ng-disabled="!selectedItem || selectedItem.type == 'folder'" ng-click="import()">Import</a>
       </div>
     </div>
   </div>
