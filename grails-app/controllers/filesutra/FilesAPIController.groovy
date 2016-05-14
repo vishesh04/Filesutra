@@ -27,7 +27,6 @@ class FilesAPIController {
         render itemResponse as JSON
     }
     def facebookFiles(String folderId, String after) {
-        println after;
         folderId = folderId ? folderId : "facebook"
         def items =  facebookService.listItems(folderId, after, Access.get(session.facebookAccessId))
         def itemResponse = []
