@@ -3,6 +3,7 @@ var filesutraControllers = angular.module("filesutraControllers", ["filesutraSer
 filesutraControllers.controller("AppCtrl", ['$scope', '$http', '$location', "fileService", "authService",
   function($scope, $http, $location, fileService, authService) {
     $scope.selectApp = function(app) {
+      $scope.runningApp = app;
       $location.path(app);
     }
 
@@ -19,6 +20,7 @@ filesutraControllers.controller("AppCtrl", ['$scope', '$http', '$location', "fil
     }
 
     $scope.isConnected = function(app) {
+     // console.log($scope.appSettings.connectedApps);
       if ($scope.appSettings.connectedApps.indexOf(app) != -1) {
         return true;
       } else {
@@ -35,12 +37,16 @@ filesutraControllers.controller("AppCtrl", ['$scope', '$http', '$location', "fil
 
     $scope.import = function() {
       fileService.import($scope.app, $scope.selectedItem, function(data) {
-        window.opener.postMessage({
+        /*window.opener.postMessage({
           type  : 'filesutra',
           data   :  data
         }, '*');
-        window.close();
+        window.close();*/
       });
+    }
+    $scope.zippy = function(){
+        filesutra.importFiles(function(data) {
+});
     }
 
     $scope.init = function(appSettings){
@@ -48,24 +54,75 @@ filesutraControllers.controller("AppCtrl", ['$scope', '$http', '$location', "fil
     }
 
     $scope.$on("$locationChangeSuccess", function (event, newUrl) {
-      var path = $location.path();
+      $scope.gettingList(0);
+    });
+
+    $scope.gettingList = function(code){
+      $scope.showButton = false;
+            var path = $location.path();
       var chunks = path.split("/");
       var app, folderId;
+
       if (chunks.length < 2) {
         $scope.selectApp("Google");
         return;
       } else {
         app = chunks[1];
         $scope.app = app;
+              $scope.runningApp = app;
+
       }
       if (chunks.length > 2) {
         folderId = chunks[chunks.length - 1];
       }
-      $scope.items = null;
+      
+      if($scope.app == "Facebook"){
+        
+      if(code==0){
+        delete $scope.items;
+      $scope.afterTokenVal = '';
+
+        if ($scope.isConnected(app)) {
+           fileService.getItems(app, folderId, $scope.afterTokenVal, function (items) {
+            //delete $scope.items;
+             $scope.items = [];
+             $scope.afterTokenVal = items.afterval;
+             if(items.listresponse.length < 25){
+                    $scope.showButton = false;
+
+             }else{
+              $scope.showButton = true;
+             }
+             for(var i=0; i< items.listresponse.length;i++){
+               $scope.items.push(items.listresponse[i]);
+             }
+            //$scope.items.push(items.listresponse);
+          });
+        }
+       }else{
+        fileService.getItems(app, folderId, $scope.afterTokenVal, function (items) {
+                        $scope.afterTokenVal = items.afterval;
+                        if(items.listresponse.length < 25){
+                    $scope.showButton = false;
+
+             }else{
+              $scope.showButton = true;
+             }
+                       for(var i=0; i< items.listresponse.length;i++){
+               $scope.items.push(items.listresponse[i]);
+             }
+          });
+
+       }
+     } else {
       if ($scope.isConnected(app)) {
-        fileService.getItems(app, folderId, function (items) {
-          $scope.items = items;
-        });
-      }
-    });
+        delete $scope.items;
+        $scope.items = null
+           fileService.getListItems(app, folderId, function (items) {
+            $scope.items = items;
+            });
+         }
+     }
+      
+    }
 }]);

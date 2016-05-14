@@ -2,7 +2,18 @@ var filesutraServices = angular.module("filesutraServices", []);
 
 filesutraServices.factory("fileService", ['$http', function($http) {
   return {
-    getItems: function(app, folderId, callback) {
+    getItems: function(app, folderId, after, callback) {
+      var endpoint = '/api/files/'+app.toLowerCase()
+      if (folderId) {
+        endpoint += '?folderId='+folderId+'&'+'after='+after;
+      }
+      $http.get(endpoint).success(function(data) {
+        callback(data);
+      }).error(function(err){
+        console.log('error');
+      });
+    },
+    getListItems: function(app, folderId, callback) {
       var endpoint = '/api/files/'+app.toLowerCase()
       if (folderId) {
         endpoint += '?folderId='+folderId;

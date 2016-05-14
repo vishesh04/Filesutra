@@ -10,6 +10,9 @@ class AuthController {
     def google() {
         redirect(url: Google.getLoginUrl())
     }
+    def facebook() {
+        redirect(url: Facebook.getLoginUrl())
+    }
 
     def dropbox() {
         redirect(url: Dropbox.getLoginUrl())
@@ -35,8 +38,24 @@ class AuthController {
             if (googleAccess) {
                 session.googleAccessId = googleAccess.id
             }
+        }else {
+
         }
         redirect(uri: '/picker#Google')
+    }
+    def facebookCallback(String code) {
+        println code;
+        if (code) {
+           def accessInfo = Facebook.exchangeCode(code)
+           def emailId = Facebook.getEmailId(accessInfo.accessToken)
+           Access facebookAccess = authService.facebookLogin(emailId, accessInfo)
+            if (facebookAccess) {
+                session.facebookAccessId = facebookAccess.id
+            }
+        }else {
+
+        }
+        redirect(uri: '/picker#Facebook')
     }
 
     def dropboxCallback(String code) {
@@ -97,6 +116,9 @@ class AuthController {
                 break
             case "Dropbox":
                 session.dropboxAccessId = null
+                break
+            case "Facebook":
+                session.facebookAccessId = null
                 break
             case "Box":
                 session.boxAccessId = null

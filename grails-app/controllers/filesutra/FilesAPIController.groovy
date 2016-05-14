@@ -9,6 +9,8 @@ class FilesAPIController {
     def boxService
     def onedriveService
     def amazonService
+    def facebookService
+
 
     def googleFiles(String folderId) {
         folderId = folderId ? folderId : "root"
@@ -23,6 +25,35 @@ class FilesAPIController {
             itemResponse.push(mItem)
         }
         render itemResponse as JSON
+    }
+    def facebookFiles(String folderId, String after) {
+        println after;
+        folderId = folderId ? folderId : "facebook"
+        def items =  facebookService.listItems(folderId, after, Access.get(session.facebookAccessId))
+        def itemResponse = []
+        def partImg
+        items.data.each {
+            def mItem = new ApiResponse.Item();
+            mItem.id = it.id
+            if(folderId == "facebook"){
+                mItem.type = "folder"
+                mItem.name = it.name
+                }else{
+                mItem.type = "file"
+                mItem.name = "facebook_photo.jpg"
+                if(it.images[5]){
+                mItem.iconurl = it.images[5]['source']
+                }else{
+                 mItem.iconurl = it.images[0]['source']
+                   
+                }
+                }
+            mItem.size = it.size ? it.size as long : null
+            itemResponse.push(mItem)
+        }
+        render(contentType: 'text/json') {
+            [listresponse:itemResponse,afterval:items.paging.cursors.after]
+        }
     }
 
     def dropboxFiles(String folderId) {
@@ -92,6 +123,23 @@ class FilesAPIController {
         def input = request.JSON
         Access access = Access.get(session.googleAccessId)
         File file = new File(fileId: input.fileId, type: StorageType.GOOGLE, access: access,
+                name: input.fileName, size: input.size)
+        file.localFileId = Utils.randomString(15)
+        file.save(flush: true, failOnError: true)
+        def fileResponse = [
+                fileName: file.name,
+                downloadUrl: request.isSecure() ? "https://" : "http://" +
+                        request.serverName + (request.serverPort && request.serverPort != 80 ? ":$request.serverPort" : "") +
+                        "/download/$file.localFileId",
+                size: file.size
+        ]
+        render fileResponse as JSON
+    }
+
+    def importFacebookFile() {
+        def input = request.JSON
+        Access access = Access.get(session.facebookAccessId)
+        File file = new File(fileId: input.fileId, type: StorageType.FACEBOOK, access: access,
                 name: input.fileName, size: input.size)
         file.localFileId = Utils.randomString(15)
         file.save(flush: true, failOnError: true)

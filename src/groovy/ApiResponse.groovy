@@ -9,6 +9,7 @@ class ApiResponse {
         String name
         String type
         Long size
+        def iconurl
         List<ApiResponse.Item> content
     }
 }
