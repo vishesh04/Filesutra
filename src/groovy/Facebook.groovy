@@ -24,7 +24,7 @@ class Facebook {
                 response_type: "code",
                 client_id    : CLIENT_ID,
                 redirect_uri : REDIRECT_URI,
-                scope        : "email,user_about_me,user_photos,user_posts"
+                scope        : "email,user_about_me,user_photos"
         ]
         def url = "$AUTH_URL?" + params.collect { k, v -> "$k=$v" }.join('&')
         return url

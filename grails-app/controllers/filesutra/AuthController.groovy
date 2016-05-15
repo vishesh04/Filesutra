@@ -38,13 +38,10 @@ class AuthController {
             if (googleAccess) {
                 session.googleAccessId = googleAccess.id
             }
-        }else {
-
         }
         redirect(uri: '/picker#Google')
     }
     def facebookCallback(String code) {
-        println code;
         if (code) {
            def accessInfo = Facebook.exchangeCode(code)
            def emailId = Facebook.getEmailId(accessInfo.accessToken)
@@ -52,8 +49,6 @@ class AuthController {
             if (facebookAccess) {
                 session.facebookAccessId = facebookAccess.id
             }
-        }else {
-
         }
         redirect(uri: '/picker#Facebook')
     }
