@@ -10,6 +10,10 @@ class FilesAPIController {
     def onedriveService
     def amazonService
     def facebookService
+    def flickrService
+    def picasaService
+
+
 
 
     def googleFiles(String folderId) {
@@ -53,6 +57,47 @@ class FilesAPIController {
         render(contentType: 'text/json') {
             [listresponse:itemResponse,afterval:items.paging.cursors.after]
         }
+    }
+
+    def flickrFiles(String folderId) {
+        folderId = folderId ? folderId : "root"
+        def items =  flickrService.listItems(folderId, Access.get(session.flickrAccessId))
+        def itemResponse = []
+        items.each {
+            def mItem = new ApiResponse.Item()
+            mItem.id = it.id
+            mItem.type = "file"
+            mItem.name = it.id+".jpg"
+            mItem.iconurl = it.url_m
+
+            itemResponse.push(mItem)
+        }
+        render itemResponse as JSON
+    }
+
+    def picasaFiles(String folderId) {
+        folderId = folderId ? folderId : "picasa"
+        def items =  picasaService.listItems(folderId, Access.get(session.picasaAccessId))
+        def itemResponse = []
+        def partImg = 
+        items.each {
+            def mItem = new ApiResponse.Item();
+
+            mItem.id = it.gphoto$id.$t
+            if(folderId == "picasa"){
+                mItem.type = "folder"
+                mItem.name = it.title.$t
+            }else{
+                mItem.type = "file"
+                mItem.name = it.title.$t
+                mItem.iconurl = it.media$group.media$thumbnail[1].url
+                mItem.size = it.gphoto$size.$t ? it.gphoto$size.$t as long : null
+
+            }
+            itemResponse.push(mItem)
+        }
+        
+        render itemResponse as JSON
     }
 
     def dropboxFiles(String folderId) {
@@ -139,6 +184,40 @@ class FilesAPIController {
         def input = request.JSON
         Access access = Access.get(session.facebookAccessId)
         File file = new File(fileId: input.fileId, type: StorageType.FACEBOOK, access: access,
+                name: input.fileName, size: input.size)
+        file.localFileId = Utils.randomString(15)
+        file.save(flush: true, failOnError: true)
+        def fileResponse = [
+                fileName: file.name,
+                downloadUrl: request.isSecure() ? "https://" : "http://" +
+                        request.serverName + (request.serverPort && request.serverPort != 80 ? ":$request.serverPort" : "") +
+                        "/download/$file.localFileId",
+                size: file.size
+        ]
+        render fileResponse as JSON
+    }
+
+     def importFlickrFile() {
+        def input = request.JSON
+        Access access = Access.get(session.flickrAccessId)
+        File file = new File(fileId: input.fileId, type: StorageType.FLICKR, access: access,
+                name: input.fileName, size: input.size)
+        file.localFileId = Utils.randomString(15)
+        file.save(flush: true, failOnError: true)
+        def fileResponse = [
+                fileName: file.name,
+                downloadUrl: request.isSecure() ? "https://" : "http://" +
+                        request.serverName + (request.serverPort && request.serverPort != 80 ? ":$request.serverPort" : "") +
+                        "/download/$file.localFileId",
+                size: file.size
+        ]
+        render fileResponse as JSON
+    }
+
+     def importPicasaFile() {
+        def input = request.JSON
+        Access access = Access.get(session.picasaAccessId)
+        File file = new File(fileId: input.fileId, type: StorageType.PICASA, access: access,
                 name: input.fileName, size: input.size)
         file.localFileId = Utils.randomString(15)
         file.save(flush: true, failOnError: true)

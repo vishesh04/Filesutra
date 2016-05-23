@@ -93,6 +93,14 @@
           <a ng-click="selectApp('Facebook')">Facebook</a>
           <a ng-if="isConnected('Facebook')" ng-click="logout('Facebook')" class="pull-right">logout</a>
         </li>
+         <li class="list-group-item">
+          <a ng-click="selectApp('Flickr')">Flickr</a>
+          <a ng-if="isConnected('Flickr')" ng-click="logout('Flickr')" class="pull-right">logout</a>
+        </li>
+        <li class="list-group-item">
+          <a ng-click="selectApp('Picasa')">Picasa</a>
+          <a ng-if="isConnected('Picasa')" ng-click="logout('Picasa')" class="pull-right">logout</a>
+        </li>
       </ul>
     </div>
     <div class="col-md-6 col-sm-6">
@@ -111,14 +119,14 @@
                 No Files or Folders
               </div>
               
-              <div ng-if="runningApp !='Facebook'" ng-repeat="item in items" >
+              <div ng-if="runningApp !='Facebook' && runningApp !='Flickr' && runningApp !='Picasa'" ng-repeat="item in items" >
                 <div class="filesutraItem" ng-click="selectItem(item)"
                      ng-class="item.id == selectedItem.id && item.type != 'folder' ? 'selectedItem' : ''">
                   <i ng-class="item.type == 'file' ? 'glyphicon glyphicon-file' : 'glyphicon glyphicon-folder-open'"></i> {{item.name}}
                 </div>
               </div>
 
-              <div ng-if="isConnected('Facebook') && runningApp =='Facebook'"  >
+              <div ng-if="isConnected('Facebook') && runningApp =='Facebook'|| isConnected('Flickr') || isConnected('Picasa') && runningApp !='Google'"  >
                 <div ng-repeat="item in items">
                   <div class="filesutraItem" ng-if="item.type != 'file'" ng-click="selectItem(item)"
                        ng-class="item.id == selectedItem.id && item.type != 'folder' ? 'selectedItem' : ''">
