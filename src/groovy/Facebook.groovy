@@ -24,7 +24,7 @@ class Facebook {
                 response_type: "code",
                 client_id    : CLIENT_ID,
                 redirect_uri : REDIRECT_URI,
-                scope        : "email,user_about_me,user_photos"
+                scope        : "email,user_photos"
         ]
         def url = "$AUTH_URL?" + params.collect { k, v -> "$k=$v" }.join('&')
         return url
@@ -62,7 +62,7 @@ class Facebook {
              def resp = restClient.get(path: "/v2.6/me/albums")
              return resp.data
         }else{
-            def resp = restClient.get(path: "/v2.6/$folderId/photos", params : [fields: "images",after: afterToken])
+            def resp = restClient.get(path: "/v2.6/$folderId/photos", params : [fields: "images,name",after: afterToken])
             return resp.data
         }
         

@@ -2,6 +2,8 @@ package filesutra
 
 import grails.converters.JSON
 
+
+
 class FilesAPIController {
 
     def googleService
@@ -12,46 +14,79 @@ class FilesAPIController {
     def facebookService
     def flickrService
     def picasaService
-
+    String type = null;
+    def size = null;
 
 
 
     def googleFiles(String folderId) {
         folderId = folderId ? folderId : "root"
-        def items =  googleService.listItems(folderId, Access.get(session.googleAccessId))
+        def items;
+        if(folderId == "untitled"){
+            items =  googleService.listItems("root", Access.get(session.googleAccessId))
+        }else{
+            items =  googleService.listItems(folderId, Access.get(session.googleAccessId))
+        }
         def itemResponse = []
+         if(folderId == "root"){
+                itemResponse.push(["id":"untitled","type":"folder","name":"Not in folder"])
+            }
         items.each {
-            def mItem = new ApiResponse.Item()
-            mItem.id = it.id
-            mItem.type = it.mimeType == "application/vnd.google-apps.folder" ? "folder" : "file"
-            mItem.name = it.title
-            mItem.size = it.fileSize ? it.fileSize as long : null
-            itemResponse.push(mItem)
+            if(folderId == "root"){
+                if(it.mimeType == "application/vnd.google-apps.folder"){
+                    def mItem = new ApiResponse.Item()
+                    mItem.id = it.id
+                    mItem.type = "folder"
+                    mItem.name = it.title
+                    mItem.size = it.fileSize ? it.fileSize as long : null
+                    itemResponse.push(mItem)
+                }
+            }else {
+                if(it.fileExtension == "jpg" || it.fileExtension == "png" || it.fileExtension == "JPG" || it.fileExtension == "PNG"){
+                    def mItem = new ApiResponse.Item()
+                    mItem.id = it.id
+                    mItem.type = "file"
+                    mItem.name = it.title
+                    mItem.thumbnail =it.thumbnailLink
+                    mItem.iconurl =it.webContentLink
+                    mItem.size = it.fileSize ? it.fileSize as long : null
+                    mItem.mimetype = it.mimeType
+                    itemResponse.push(mItem)
+                }else if(it.mimeType == "application/vnd.google-apps.folder" && folderId != "untitled"){
+                    def mItem = new ApiResponse.Item()
+                    mItem.id = it.id
+                    mItem.type = "folder"
+                    mItem.name = it.title
+                    mItem.size = it.fileSize ? it.fileSize as long : null
+                    itemResponse.push(mItem)
+                }
+            }
         }
         render itemResponse as JSON
     }
     def facebookFiles(String folderId, String after) {
+        def typeSize;
         folderId = folderId ? folderId : "facebook"
         def items =  facebookService.listItems(folderId, after, Access.get(session.facebookAccessId))
         def itemResponse = []
-        def partImg
         items.data.each {
             def mItem = new ApiResponse.Item();
             mItem.id = it.id
             if(folderId == "facebook"){
                 mItem.type = "folder"
                 mItem.name = it.name
-                }else{
+            }else{
                 mItem.type = "file"
-                mItem.name = "facebook_photo.jpg"
-                if(it.images[5]){
-                mItem.iconurl = it.images[5]['source']
+                if(it.name){
+                    mItem.name = it.name
                 }else{
-                 mItem.iconurl = it.images[0]['source']
-                   
+                    mItem.name = it.id
                 }
-                }
-            mItem.size = it.size ? it.size as long : null
+                mItem.iconurl = it.images[0]['source']
+                typeSize = getMimeType(mItem.iconurl)
+                mItem.mimetype = typeSize[0]
+                mItem.size = typeSize[1]
+            }
             itemResponse.push(mItem)
         }
         render(contentType: 'text/json') {
@@ -59,30 +94,47 @@ class FilesAPIController {
         }
     }
 
-    def flickrFiles(String folderId) {
-        folderId = folderId ? folderId : "root"
-        def items =  flickrService.listItems(folderId, Access.get(session.flickrAccessId))
+   def flickrFiles(String folderId, String after) {
+        def typeSize ;
+        folderId = folderId ? folderId : "flickr"
+        def items =  flickrService.listItems(folderId, after, Access.get(session.flickrAccessId))
         def itemResponse = []
-        items.each {
-            def mItem = new ApiResponse.Item()
-            mItem.id = it.id
-            mItem.type = "file"
-            mItem.name = it.id+".jpg"
-            mItem.iconurl = it.url_m
-
-            itemResponse.push(mItem)
+        if(folderId == "flickr"){
+            itemResponse.push(["id":"untitled","type":"folder","name":"Not in folder"])
+            items.photoset.each {
+                def mItem = new ApiResponse.Item();
+                mItem.id = it.id
+                mItem.type = "folder"
+                mItem.name = it.title["_content"]
+                itemResponse.push(mItem)
+            }
+            render(contentType: 'text/json') {
+                [listresponse:itemResponse,afterval:""]
+            }
+        }else {
+            items.photo.each {
+                def mItem = new ApiResponse.Item();
+                mItem.id = it.id
+                mItem.type = "file"
+                mItem.name = it.title
+                mItem.iconurl = it.url_m
+                typeSize = getMimeType(mItem.iconurl)
+                mItem.size = typeSize[1]
+                mItem.mimetype = typeSize[0]
+                itemResponse.push(mItem)
+            }
+            render(contentType: 'text/json') {
+                [listresponse:itemResponse,afterval:items.page]
+            }
         }
-        render itemResponse as JSON
+    
     }
-
     def picasaFiles(String folderId) {
         folderId = folderId ? folderId : "picasa"
         def items =  picasaService.listItems(folderId, Access.get(session.picasaAccessId))
         def itemResponse = []
-        def partImg = 
         items.each {
             def mItem = new ApiResponse.Item();
-
             mItem.id = it.gphoto$id.$t
             if(folderId == "picasa"){
                 mItem.type = "folder"
@@ -90,13 +142,12 @@ class FilesAPIController {
             }else{
                 mItem.type = "file"
                 mItem.name = it.title.$t
-                mItem.iconurl = it.media$group.media$thumbnail[1].url
+                mItem.iconurl = it.media$group.media$content[0].url
                 mItem.size = it.gphoto$size.$t ? it.gphoto$size.$t as long : null
-
+                mItem.mimetype = it.media$group.media$content[0].type
             }
             itemResponse.push(mItem)
         }
-        
         render itemResponse as JSON
     }
 
@@ -166,16 +217,17 @@ class FilesAPIController {
     def importGoogleFile() {
         def input = request.JSON
         Access access = Access.get(session.googleAccessId)
-        File file = new File(fileId: input.fileId, type: StorageType.GOOGLE, access: access,
+        File file = new File(fileId: input.fileId, type: "GOOGLE", access: access,
                 name: input.fileName, size: input.size)
         file.localFileId = Utils.randomString(15)
         file.save(flush: true, failOnError: true)
         def fileResponse = [
-                fileName: file.name,
-                downloadUrl: request.isSecure() ? "https://" : "http://" +
+                filename: file.name,
+                url: request.isSecure() ? "https://" : "http://" +
                         request.serverName + (request.serverPort && request.serverPort != 80 ? ":$request.serverPort" : "") +
                         "/download/$file.localFileId",
-                size: file.size
+                size: file.size,
+                mimetype: input.mimetype
         ]
         render fileResponse as JSON
     }
@@ -183,16 +235,17 @@ class FilesAPIController {
     def importFacebookFile() {
         def input = request.JSON
         Access access = Access.get(session.facebookAccessId)
-        File file = new File(fileId: input.fileId, type: StorageType.FACEBOOK, access: access,
+        File file = new File(fileId: input.fileId, type: "FACEBOOK", access: access,
                 name: input.fileName, size: input.size)
         file.localFileId = Utils.randomString(15)
         file.save(flush: true, failOnError: true)
         def fileResponse = [
-                fileName: file.name,
-                downloadUrl: request.isSecure() ? "https://" : "http://" +
+                filename: file.name,
+                url: request.isSecure() ? "https://" : "http://" +
                         request.serverName + (request.serverPort && request.serverPort != 80 ? ":$request.serverPort" : "") +
                         "/download/$file.localFileId",
-                size: file.size
+                size: file.size,
+                mimetype: input.mimetype
         ]
         render fileResponse as JSON
     }
@@ -200,16 +253,17 @@ class FilesAPIController {
      def importFlickrFile() {
         def input = request.JSON
         Access access = Access.get(session.flickrAccessId)
-        File file = new File(fileId: input.fileId, type: StorageType.FLICKR, access: access,
+        File file = new File(fileId: input.fileId, type: "FLICKR", access: access,
                 name: input.fileName, size: input.size)
         file.localFileId = Utils.randomString(15)
         file.save(flush: true, failOnError: true)
         def fileResponse = [
-                fileName: file.name,
-                downloadUrl: request.isSecure() ? "https://" : "http://" +
+                filename: file.name,
+                url: request.isSecure() ? "https://" : "http://" +
                         request.serverName + (request.serverPort && request.serverPort != 80 ? ":$request.serverPort" : "") +
                         "/download/$file.localFileId",
-                size: file.size
+                size: file.size,
+                mimetype: input.mimetype
         ]
         render fileResponse as JSON
     }
@@ -217,19 +271,41 @@ class FilesAPIController {
      def importPicasaFile() {
         def input = request.JSON
         Access access = Access.get(session.picasaAccessId)
-        File file = new File(fileId: input.fileId, type: StorageType.PICASA, access: access,
+        File file = new File(fileId: input.fileId, type: "PICASA", access: access,
                 name: input.fileName, size: input.size)
         file.localFileId = Utils.randomString(15)
         file.save(flush: true, failOnError: true)
         def fileResponse = [
-                fileName: file.name,
-                downloadUrl: request.isSecure() ? "https://" : "http://" +
+                filename: file.name,
+                url: request.isSecure() ? "https://" : "http://" +
                         request.serverName + (request.serverPort && request.serverPort != 80 ? ":$request.serverPort" : "") +
                         "/download/$file.localFileId",
-                size: file.size
+                size: file.size,
+                mimetype: input.mimetype
         ]
         render fileResponse as JSON
     }
+
+
+    def importDropboxFile() {
+        def input = request.JSON
+        Access access = Access.get(session.dropboxAccessId)
+        File file = new File(fileId: input.fileId, type: "DROPBOX", access: access,
+                name: input.fileName, size: input.size)
+        file.localFileId = Utils.randomString(15)
+        file.save(flush: true, failOnError: true)
+        def fileResponse = [
+                filename: file.name,
+                url: request.isSecure() ? "https://" : "http://" +
+                        request.serverName + (request.serverPort && request.serverPort != 80 ? ":$request.serverPort" : "") +
+                        "/download/$file.localFileId",
+                size: file.size,
+                mimetype: input.mimetype
+        ]
+        render fileResponse as JSON
+    }
+
+ 
 
     def importBoxFile() {
         def input = request.JSON
@@ -248,22 +324,6 @@ class FilesAPIController {
         render fileResponse as JSON
     }
 
-    def importDropboxFile() {
-        def input = request.JSON
-        Access access = Access.get(session.dropboxAccessId)
-        File file = new File(fileId: input.fileId, type: StorageType.DROPBOX, access: access,
-                name: input.fileName, size: input.size)
-        file.localFileId = Utils.randomString(15)
-        file.save(flush: true, failOnError: true)
-        def fileResponse = [
-                fileName: file.name,
-                downloadUrl: request.isSecure() ? "https://" : "http://" +
-                        request.serverName + (request.serverPort && request.serverPort != 80 ? ":$request.serverPort" : "") +
-                        "/download/$file.localFileId",
-                size: file.size
-        ]
-        render fileResponse as JSON
-    }
 
     def importOnedriveFile() {
         def input = request.JSON
@@ -298,4 +358,13 @@ class FilesAPIController {
         ]
         render fileResponse as JSON
     }
+    def getMimeType(fileLink){
+        URL u = new URL(fileLink);
+        URLConnection uc = null;
+        uc = u.openConnection();
+        type = uc.getContentType();
+        size = uc.getContentLength();
+        return [type, size]
+    }
+
 }

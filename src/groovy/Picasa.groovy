@@ -29,7 +29,8 @@ class Picasa {
                 redirect_uri : REDIRECT_URI,
                 client_id    : CLIENT_ID,                
                 access_type  : "offline",
-                scope        : "https://picasaweb.google.com/data"
+                scope        : "https://picasaweb.google.com/data",
+                approval_prompt:"force"
         ]
         def url = "$AUTH_URL?" + params.collect { k, v -> "$k=$v" }.join('&')
         return url
@@ -44,7 +45,7 @@ class Picasa {
                 requestContentType: URLENC)
         return [
                 accessToken: resp.data.access_token,
-               // refreshToken: resp.data.refresh_token
+                refreshToken: resp.data.refresh_token
         ]
     }
 

@@ -10,6 +10,8 @@ class ApiResponse {
         String type
         Long size
         def iconurl
+        String mimetype
+        def thumbnail
         List<ApiResponse.Item> content
     }
 }

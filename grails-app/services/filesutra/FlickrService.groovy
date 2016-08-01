@@ -12,9 +12,9 @@ class FlickrService {
        
     }
 
-    def listItems(String folderId, Access access) {
+    def listItems(String folderId, String after, Access access) {
         callAPI({ accessToken->
-            return Flickr.listItems(folderId, accessToken)
+            return Flickr.listItems(folderId, after, accessToken)
         }, access)
     }
 

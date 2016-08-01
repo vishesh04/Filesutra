@@ -25,7 +25,8 @@ class Google {
                 client_id    : CLIENT_ID,
                 redirect_uri : REDIRECT_URI,
                 access_type  : "offline",
-                scope        : "email https://www.googleapis.com/auth/drive"
+                scope        : "email https://www.googleapis.com/auth/drive",
+                approval_prompt:"force"
         ]
         def url = "$AUTH_URL?" + params.collect { k, v -> "$k=$v" }.join('&')
         return url

@@ -75,12 +75,47 @@ class Flickr {
         return name;
     }
 
-    static def listItems(String folderId, String accessToken) {
+    /*static def listItems(String folderId, String accessToken) {
         String newValue = accessToken+"extrasurl_mformatjson"
         def frobSig = getTokenSignature(newValue,"flickr.people.getPhotosnojsoncallback1per_page500user_idme");
         def restClient = new RESTClient(API_URL)
         def resp = restClient.get(path: "/services/rest/", params : [method: "flickr.people.getPhotos",api_key: CLIENT_ID, auth_token: accessToken, api_sig: frobSig,user_id:"me", format:"json",nojsoncallback:"1",extras:"url_m",per_page:"500"])
         return resp.data.photos.photo
+    }*/
+    static def listItems(String folderId, String after, String accessToken) {
+        
+        def restClient = new RESTClient(API_URL)
+        if(folderId == "flickr"){
+             String newValue = accessToken+"formatjson"
+             def frobSig = getTokenSignature(newValue,"flickr.photosets.getListnojsoncallback1");
+             def resp = restClient.get(path: "/services/rest/", params : [method: "flickr.photosets.getList",api_key: CLIENT_ID, auth_token: accessToken, api_sig: frobSig,format:"json",nojsoncallback:"1"])
+
+             return resp.data.photosets
+        }else if(folderId == "untitled"){
+            def pageNumber;
+            if(after!=''){
+                pageNumber = ++after
+            }else{
+                pageNumber = 1;
+            }
+            String newValue = accessToken+"extrasurl_mformatjson"
+            def frobSig = getTokenSignature(newValue,"flickr.photos.getNotInSetnojsoncallback1page"+pageNumber+"per_page25photoset_id"+folderId+"privacy_filter%5B1%2C2%2C3%2C4%2C5%5D");
+
+            def resp = restClient.get(path: "/services/rest/", params : [method: "flickr.photos.getNotInSet",api_key: CLIENT_ID, auth_token: accessToken, api_sig: frobSig, format:"json",nojsoncallback:"1",extras:"url_m", page:pageNumber, per_page:"25", photoset_id:folderId, privacy_filter:"%5B1%2C2%2C3%2C4%2C5%5D"])
+            return resp.data.photos
+        }else{
+            def pageNumber;
+            if(after!=''){
+                pageNumber = ++after
+            }else{
+                pageNumber = 1;
+            }
+            String newValue = accessToken+"extrasurl_mformatjson"
+            def frobSig = getTokenSignature(newValue,"flickr.photosets.getPhotosnojsoncallback1page"+pageNumber+"per_page25photoset_id"+folderId+"privacy_filter%5B1%2C2%2C3%2C4%2C5%5D");
+
+            def resp = restClient.get(path: "/services/rest/", params : [method: "flickr.photosets.getPhotos",api_key: CLIENT_ID, auth_token: accessToken, api_sig: frobSig, format:"json",nojsoncallback:"1",extras:"url_m", page:pageNumber, per_page:"25", photoset_id:folderId, privacy_filter:"%5B1%2C2%2C3%2C4%2C5%5D"])
+            return resp.data.photoset
+        }
     }
 
     static def getFile(String fileId, String accessToken) {
@@ -94,7 +129,12 @@ class Flickr {
 
     static URLConnection getDownloadUrlConnection(String fileId, String accessToken) {
         def file = getFile(fileId, accessToken)
-        String contentUrl = file[6]['source'];
+        String contentUrl
+       file.each {
+            if(it.label == "Original"){
+               contentUrl = it.source;
+            }
+        }
         URL url = new URL(contentUrl)
         URLConnection connection = url.openConnection();
         connection.connect()
