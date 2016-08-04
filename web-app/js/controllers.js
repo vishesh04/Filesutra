@@ -46,6 +46,33 @@ filesutraControllers.controller("AppCtrl", ['$scope', '$http', '$location', "fil
       }
     }
 
+     $scope.uploadFile = function(event){
+       //$('#submitIt').submit();
+        var me1 = $('#submitIt')
+        me1.ajaxSubmit({
+              url : "/demo/upload",
+              dataType : "jsonp",
+              success : function (response, statusText, xhr, form) {
+                var images = JSON.parse(response);
+                //console.log(typeof(images))
+                //console.log(images)
+                  var message = {
+                    type  : 'filesutra',
+                    data   :  images
+                  }
+                  if (window.opener) {
+                    window.opener.postMessage(message, '*');
+                    window.close();
+                  } else {
+                    // iframe
+                    parent.postMessage(message, '*');
+                  }
+              },
+              error : function(xhr, ajaxOptions, thrownError){
+                console.log(thrownError);
+              }
+          });
+         };
       
 
     $scope.selectItem = function (item) {
@@ -81,6 +108,7 @@ filesutraControllers.controller("AppCtrl", ['$scope', '$http', '$location', "fil
         uploadCount++;
         importedFiles.push(data);
         if(uploadCount == $scope.userGroupId.length ){
+          console.log(importedFiles);
         var message = {
           type  : 'filesutra',
           data   :  importedFiles
@@ -116,13 +144,12 @@ filesutraControllers.controller("AppCtrl", ['$scope', '$http', '$location', "fil
       var chunks = path.split("/");
       var app, folderId;
       if (chunks.length < 2) {
-        $scope.selectApp("Google");
+        $scope.selectApp("Local");
         return;
       } else {
         app = chunks[1];
         $scope.app = app;
         $scope.runningApp = app;
-
       }
       if (chunks.length > 2) {
         folderId = chunks[chunks.length - 1];

@@ -19,6 +19,7 @@
   <script src="/js/app.js"></script>
   <script src="/js/controllers.js"></script>
   <script src="/js/services.js"></script>
+  <script src="/js/jquery.form.js"></script>
   <script src="http://filesutra.com/js/filesutra.js"></script>
 
   <style>
@@ -74,9 +75,9 @@
   <br/>
     <div class="col-md-3 col-sm-3">
     <ul class="list-group">
-     <!--li class="list-group-item" ng-click="selectApp('Local')">
+     <li class="list-group-item" ng-click="selectApp('Local')">
           <a >My Computer</a>
-        </li-->
+        </li>
         <li class="list-group-item" ng-click="selectApp('Google')">
           <a >Google Drive</a>
           <a ng-if="isConnected('Google')" ng-click="logout('Google')" class="pull-right">logout</a>
@@ -120,6 +121,11 @@
               <a class="btn btn-primary" ng-click="login(app)">
                 Connect {{app=='AmazonCloudDrive'? 'Amazon Cloud Drive' : app}}</a>
             </div>
+             <div ng-if="!isConnected(app) && runningApp =='Local'" style="text-align: center; margin-top: 40px">
+              <form id="submitIt" class="upload_resource1" method="post"  enctype="multipart/form-data" style="text-align: -moz-center;">                
+                <input type="file" class="fileUploadInput btn btn-primary" style="display: -webkit-inline-box;" name="resources" id="fileUploadInput" custom-on-change="uploadFile" accept="image/*" title="Choose File" multiple/> 
+              </form>                
+            </div>
 
             <div ng-if="isConnected(app)">
               <div ng-if="!items" style="text-align: center;">
@@ -148,7 +154,7 @@
                        <p style="overflow: hidden;white-space: nowrap;text-align: center;">{{item.name}}</p>
                        </li>
                       </ul>
-                        <button id="singlebutton" name="singlebutton" ng-disabled="isDisabled" class="btn btn-primary bottom2" ng-show="$last && showButton" ng-click="gettingList(1)">{{loadMoreText}}</button> 
+                        <button id="singlebutton" name="singlebutton" ng-disabled="isDisabled" style="margin-left: 50%;" class="btn btn-primary bottom2" ng-show="$last && showButton" ng-click="gettingList(1)">{{loadMoreText}}</button> 
                   </div>
             </div>
           </div>
