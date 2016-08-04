@@ -29,14 +29,16 @@ class DemoController {
     }
 
     def upload(){
-      def resourcesInfo = [];              
-      request.getMultiFileMap().resources.each { f ->
-        def folder = new File( '/apps/biodiv/fileops' )//folder location where images needs to be saved
+      def resourcesInfo = [];    
+      def rootDir =  grailsApplication.config.fileOps.resources.rootDir; 
+      def folder = new File( rootDir )//folder location where images needs to be saved
         if( !folder.exists() ) {
           folder.mkdirs()//create folder if not exists
-        }
-        f.transferTo(new File(folder.toString()+"/"+f.originalFilename));//storing the file on the server
-        resourcesInfo.add([size:f.size, url: folder.toString()+"/"+f.originalFilename,contentType:f.contentType, originalFilename:f.originalFilename]);
+        }         
+      request.getMultiFileMap().resources.each { f ->
+       def name = Utils.generateSafeFileName(f.originalFilename);
+        f.transferTo(new File(folder.toString()+"/"+name));//storing the file on the server
+        resourcesInfo.add([size:f.size, url: folder.toString()+"/"+name,contentType:f.contentType, originalFilename:f.originalFilename]);
     }
         render resourcesInfo as JSON 
 
