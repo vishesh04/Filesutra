@@ -31,7 +31,7 @@ class DemoController {
     def upload(){
       def resourcesInfo = [];              
       request.getMultiFileMap().resources.each { f ->
-        def folder = new File( '/path/to/fileOps/folder/Location' )//folder location where images needs to be saved
+        def folder = new File( '/apps/biodiv/fileops' )//folder location where images needs to be saved
         if( !folder.exists() ) {
           folder.mkdirs()//create folder if not exists
         }
