@@ -2,7 +2,7 @@
 
 Filesutra is an easy way to implement imports and uploads from all popular cloud storage. Supports google drive, onedrive, box, dropbox.
 
-*Filesutra is evolved into [CloudFiles](https://cloudfilesapp.co), we will soon opensource the filesutra component of CloudFiles. At CloudFiles, we have re-written Filesutra component using NodeJS & ReactJS.*
+*Filesutra has now evolved into [CloudFiles](https://cloudfilesapp.co), we will soon opensource the filesutra component of CloudFiles. At CloudFiles, we have re-written Filesutra component using NodeJS & ReactJS.*
 
 Filesutra backend is written using [grails framework](https://grails.org/) and frontend is written using [angularjs](https://angularjs.org/).
 
