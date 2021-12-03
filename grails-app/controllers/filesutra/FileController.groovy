@@ -7,6 +7,10 @@ class FileController {
     def dropboxService
     def onedriveService
     def amazonService
+    def facebookService
+    def flickrService
+    def picasaService
+
 
     def downloadFile(String id) {
         def files = File.findAllByLocalFileId(id)
@@ -25,6 +29,18 @@ class FileController {
                     }
                     connection = googleFile.connection
                     proxyUrlConnection(connection, file, fileName, response)
+                    break
+                case StorageType.FACEBOOK:
+                    connection = facebookService.getDownloadUrlConnection(file.fileId, file.access)
+                    proxyUrlConnection(connection, file, file.name, response)
+                    break
+                case StorageType.FLICKR:
+                    connection = flickrService.getDownloadUrlConnection(file.fileId, file.access)
+                    proxyUrlConnection(connection, file, file.name, response)
+                    break
+                case StorageType.PICASA:
+                    connection = picasaService.getDownloadUrlConnection(file.fileId, file.access)
+                    proxyUrlConnection(connection, file, file.name, response)
                     break
                 case StorageType.BOX:
                     connection = boxService.getDownloadUrlConnection(file.fileId, file.access)

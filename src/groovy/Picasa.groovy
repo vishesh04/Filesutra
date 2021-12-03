@@ -2,30 +2,34 @@ package filesutra
 
 import grails.util.Holders
 import groovyx.net.http.RESTClient
+import groovy.json.JsonBuilder
+import grails.converters.JSON;
 
 import static groovyx.net.http.ContentType.URLENC
 
 /**
- * Created by vishesh on 06/05/15.
+ * Created by Karthik on 20/05/16.
  */
-class Google {
+class Picasa {
 
     def static grailsApplication = Holders.getGrailsApplication()
 
-    private static final String CLIENT_ID     = grailsApplication.config.auth.google.CLIENT_ID
-    private static final String CLIENT_SECRET = grailsApplication.config.auth.google.CLIENT_SECRET
-    private static final String REDIRECT_URI = grailsApplication.config.auth.google.REDIRECT_URI
+    private static final String CLIENT_ID     = grailsApplication.config.auth.picasa.CLIENT_ID
+    private static final String CLIENT_SECRET = grailsApplication.config.auth.picasa.CLIENT_SECRET
+    private static final String REDIRECT_URI = grailsApplication.config.auth.picasa.REDIRECT_URI
 
     private static final String AUTH_URL = "https://accounts.google.com/o/oauth2/auth"
     private static final String API_URL = "https://www.googleapis.com"
+    private static final String PIC_URL = "https://picasaweb.google.com"
+
 
     static def getLoginUrl() {
         def params = [
                 response_type: "code",
-                client_id    : CLIENT_ID,
                 redirect_uri : REDIRECT_URI,
+                client_id    : CLIENT_ID,                
                 access_type  : "offline",
-                scope        : "email https://www.googleapis.com/auth/drive",
+                scope        : "https://picasaweb.google.com/data",
                 approval_prompt:"force"
         ]
         def url = "$AUTH_URL?" + params.collect { k, v -> "$k=$v" }.join('&')
@@ -46,37 +50,45 @@ class Google {
     }
 
     static def getEmailId(String accessToken) {
-        def restClient = new RESTClient(API_URL)
-        restClient.headers.Authorization = "Bearer $accessToken"
-        def resp = restClient.get(path: '/plus/v1/people/me')
-        return resp.data.emails[0].value
+     
+        return "Picasa_User"
     }
 
     static def listItems(String folderId, String accessToken) {
-        def restClient = new RESTClient(API_URL)
-        restClient.headers.Authorization = "Bearer $accessToken"
-        def resp = restClient.get(path: "/drive/v2/files", params : [q: "'$folderId' in parents and trashed=false"])
-        return resp.data.items
+          def restClient = new RESTClient(PIC_URL)
+          restClient.headers.Authorization = "Bearer $accessToken"
+            if(folderId == "picasa"){
+                def resp = restClient.get(path: '/data/feed/api/user/default',params:[alt:"json"])
+                def json = new JsonBuilder(resp.data).toPrettyString()
+                def value = JSON.parse(json)
+                return value.feed.entry;
+            }else{
+                def pathVal = "/data/feed/api/user/default/albumid/"+folderId
+                def resp = restClient.get(path: pathVal,params:[alt:"json"])
+                def json = new JsonBuilder(resp.data).toPrettyString()
+                def value = JSON.parse(json)
+                return value.feed.entry;
+            }
     }
 
     static def getFile(String fileId, String accessToken) {
-        def restClient = new RESTClient(API_URL)
-        restClient.headers.Authorization = "Bearer $accessToken"
-        def resp = restClient.get(path: "/drive/v2/files/$fileId")
-        return resp.data
+         def restClient = new RESTClient(PIC_URL)
+         restClient.headers.Authorization = "Bearer $accessToken"
+         def resp = restClient.get(path: "/data/feed/api/user/default/photoid/$fileId",params:[alt:"json"])
+         def json = new JsonBuilder(resp.data).toPrettyString()
+         def value = JSON.parse(json)
+        return value.feed.media$group.media$content[0].url;
     }
 
-    static def getDownloadUrlConnection(String fileId, String accessToken) {
+    
+
+    static URLConnection getDownloadUrlConnection(String fileId, String accessToken) {
         def file = getFile(fileId, accessToken)
-        String contentUrl = file.downloadUrl ? file.downloadUrl : file.exportLinks?."application/pdf"
-        URL url = new URL(contentUrl)
+        URL url = new URL(file)
         URLConnection connection = url.openConnection();
         connection.setRequestProperty("Authorization", 'Bearer ' + accessToken);
-        def resp = [connection: connection]
-        if (!file.downloadUrl && contentUrl) {
-            resp.extension = "pdf"
-        }
-        return resp
+        connection.connect()
+        return connection
     }
 
     static def refreshToken(String refreshToken) {

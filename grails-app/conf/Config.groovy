@@ -137,6 +137,12 @@ grails.app.context = '/'
 grails.plugin.databasemigration.updateOnStart = true
 grails.plugin.databasemigration.updateOnStartFileNames = ['changelog.groovy']
 
+fileOps{
+    resources {
+        app.rootDir = "/apps/biodiv"
+        rootDir = "${app.rootDir}/fileops"
+    }
+}
 grails {
     plugin {
         //Cookie-Session-Plugin Configuration

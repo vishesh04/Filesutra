@@ -8,7 +8,17 @@ class AuthController {
     def amazonService
 
     def google() {
+        
         redirect(url: Google.getLoginUrl())
+    }
+    def facebook() {
+        redirect(url: Facebook.getLoginUrl())
+    }
+    def flickr() {
+        redirect(url: Flickr.getLoginUrl())
+    }
+    def picasa() {
+        redirect(url: Picasa.getLoginUrl())
     }
 
     def dropbox() {
@@ -37,6 +47,40 @@ class AuthController {
             }
         }
         redirect(uri: '/picker#Google')
+    }
+    def facebookCallback(String code) {
+        if (code) {
+           def accessInfo = Facebook.exchangeCode(code)
+           def emailId = Facebook.getEmailId(accessInfo.accessToken)
+           Access facebookAccess = authService.facebookLogin(emailId, accessInfo)
+            if (facebookAccess) {
+                session.facebookAccessId = facebookAccess.id
+            }
+        }
+        redirect(uri: '/picker#Facebook')
+    }
+    def flickrCallback(String frob) {
+        if (frob) {
+           def accessInfo = Flickr.exchangeCode(frob);
+           def emailId = Flickr.getEmailId(accessInfo.accessToken)
+           Access flickrAccess = authService.flickrLogin(emailId, accessInfo)
+            if (flickrAccess) {
+                session.flickrAccessId = flickrAccess.id
+            }
+        }
+        redirect(uri: '/picker#Flickr')
+    }
+
+    def picasaCallback(String code) {
+        if (code) {
+            def accessInfo = Picasa.exchangeCode(code)
+            def emailId = Picasa.getEmailId(accessInfo.accessToken)
+            Access picasaAccess = authService.picasaLogin(emailId, accessInfo)
+            if (picasaAccess) {
+                session.picasaAccessId = picasaAccess.id
+            }
+        }
+        redirect(uri: '/picker#Picasa')
     }
 
     def dropboxCallback(String code) {
@@ -97,6 +141,15 @@ class AuthController {
                 break
             case "Dropbox":
                 session.dropboxAccessId = null
+                break
+            case "Facebook":
+                session.facebookAccessId = null
+                break
+            case "Flickr":
+                session.flickrAccessId = null
+                break
+            case "Picasa":
+                session.picasaAccessId = null
                 break
             case "Box":
                 session.boxAccessId = null

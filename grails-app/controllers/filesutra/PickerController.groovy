@@ -9,6 +9,15 @@ class PickerController {
         if (session.googleAccessId) {
             connectedApps.push("Google")
         }
+        if (session.facebookAccessId) {
+            connectedApps.push("Facebook")
+        }
+        if (session.flickrAccessId) {
+            connectedApps.push("Flickr")
+        }
+        if (session.picasaAccessId) {
+            connectedApps.push("Picasa")
+        }
         if (session.boxAccessId) {
             connectedApps.push("Box")
         }

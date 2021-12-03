@@ -20,6 +20,39 @@ class AuthService {
         return access
     }
 
+    Access facebookLogin(emailId, accessInfo) {
+        // save google info
+        Access access = Access.findByEmailIdAndType(emailId, StorageType.FACEBOOK)
+        if (!access) {
+            access = new Access(type: StorageType.FACEBOOK, emailId: emailId)
+        }
+        access.accessInfo = Utils.jsonToString(accessInfo)
+        access.save(flush: true, failOnError: true)
+        return access
+    }
+
+    Access flickrLogin(emailId, accessInfo) {
+        // save google info
+        Access access = Access.findByEmailIdAndType(emailId, StorageType.FLICKR)
+        if (!access) {
+            access = new Access(type: StorageType.FLICKR, emailId: emailId)
+        }
+        access.accessInfo = Utils.jsonToString(accessInfo)
+        access.save(flush: true, failOnError: true)
+        return access
+    }
+
+     Access picasaLogin(emailId, accessInfo) {
+        // save google info
+        Access access = Access.findByEmailIdAndType(emailId, StorageType.PICASA)
+        if (!access) {
+            access = new Access(type: StorageType.PICASA, emailId: emailId)
+        }
+        access.accessInfo = Utils.jsonToString(accessInfo)
+        access.save(flush: true, failOnError: true)
+        return access
+    }
+
     Access dropboxLogin(emailId, accessInfo) {
         // save dropbox info
         Access access = Access.findByEmailIdAndType(emailId, StorageType.DROPBOX)
