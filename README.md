@@ -1,6 +1,6 @@
 # Filesutra
 
-*Filesutra has now evolved into [CloudFiles](https://cloudfilesapp.co), we will soon opensource the filesutra component of CloudFiles. At CloudFiles, we have re-written Filesutra component using NodeJS & ReactJS.*
+*Filesutra has now evolved into [CloudFiles](https://cloudfiles.io), we will soon opensource the filesutra component of CloudFiles. At CloudFiles, we have re-written Filesutra component using NodeJS & ReactJS.*
 
 ----
 
